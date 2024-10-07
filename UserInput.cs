@@ -38,8 +38,8 @@ namespace CodingTracker.harris_andy
                         Environment.Exit(0);
                         break;
                     case 1:
-                        Console.WriteLine("FART");
-                        // RetrieveRecord.GetAllRecords();
+                        // Console.WriteLine("FART");
+                        RetrieveRecord.GetAllRecords();
                         break;
                     case 2:
                         DBInteractions.Insert();

@@ -47,3 +47,4 @@
 /Users/andrew/Sync/Programming/C#/cSharpAcademy/CodingTracker.harris-andy/bin/Debug/net8.0/App.config
 /Users/andrew/Sync/Programming/C#/cSharpAcademy/CodingTracker.harris-andy/bin/Debug/net8.0/Spectre.Console.dll
 /Users/andrew/Sync/Programming/C#/cSharpAcademy/CodingTracker.harris-andy/obj/Debug/net8.0/CodingTracker.harris-andy.sourcelink.json
+/Users/andrew/Sync/Programming/C#/cSharpAcademy/CodingTracker.harris-andy/bin/Debug/net8.0/Dapper.dll

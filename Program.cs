@@ -35,34 +35,7 @@ using System.Globalization;
 using Microsoft.Data.Sqlite;
 using CodingTracker.harris_andy;
 
-// string connectionString = ConfigurationManager.ConnectionStrings["connectionString"].ConnectionString;
-// string dbPath = ConfigurationManager.AppSettings["DB-Path"] ?? "./";
 
-using SqliteConnection connection = new SqliteConnection(AppConfig.ConnectionString);
-connection.Open();
-var tableCmd = connection.CreateCommand();
-
-tableCmd.CommandText = @"CREATE TABLE IF NOT EXISTS coding (
-    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-    StartDate TEXT,
-    EndDate TEXT,
-    StartTime TEXT,
-    EndTime TEXT,
-    Activity TEXT
-    )";
-
-tableCmd.ExecuteNonQuery();
-
-// DBInteractions.DeleteTableContents();
-
-using var command = new SqliteCommand("SELECT COUNT(*) FROM coding;", connection);
-
-var count = Convert.ToInt32(command.ExecuteScalar());
-if (count == 0)
-{
-    DBInteractions.PopulateDatabase();
-}
-
-connection.Close();
+DBInteractions.InitializeDatabase();
 
 UserInput.MainMenu();

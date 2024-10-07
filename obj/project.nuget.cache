@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "MKPvKWDLh+Y=",
+  "dgSpecHash": "YGDiwQdBCtM=",
   "success": true,
   "projectFilePath": "/Users/andrew/Sync/Programming/C#/cSharpAcademy/CodingTracker.harris-andy/CodingTracker.harris-andy.csproj",
   "expectedPackageFiles": [
+    "/Users/andrew/.nuget/packages/dapper/2.1.35/dapper.2.1.35.nupkg.sha512",
     "/Users/andrew/.nuget/packages/microsoft.data.sqlite/8.0.4/microsoft.data.sqlite.8.0.4.nupkg.sha512",
     "/Users/andrew/.nuget/packages/microsoft.data.sqlite.core/8.0.4/microsoft.data.sqlite.core.8.0.4.nupkg.sha512",
     "/Users/andrew/.nuget/packages/spectre.console/0.49.1/spectre.console.0.49.1.nupkg.sha512",

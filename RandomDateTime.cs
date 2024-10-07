@@ -8,7 +8,7 @@ namespace CodingTracker.harris_andy
     public class RandomDateTime
     {
         private static Random random = new Random();
-        public static DateTime GetRandomDate()
+        public static DateTime RandomDate()
         {
             DateTime start = new DateTime(2023, 1, 1);
             DateTime end = DateTime.Now;
@@ -18,7 +18,7 @@ namespace CodingTracker.harris_andy
             return start.AddDays(randomDays);
         }
 
-        public static DateTime GetRandomTime(DateTime date)
+        public static DateTime RandomStartDateTime(DateTime date)
         {
             int hours = random.Next(0, 24);
             int minutes = random.Next(0, 60);
@@ -27,9 +27,9 @@ namespace CodingTracker.harris_andy
             return date.AddHours(hours).AddMinutes(minutes).AddSeconds(seconds);
         }
 
-        public static DateTime GetRandomEndTime(DateTime startTime)
+        public static DateTime RandomEndDateTime(DateTime startTime)
         {
-            int minutes = random.Next(1, 242);
+            int minutes = random.Next(1, 181);
             return startTime.AddMinutes(minutes);
         }
     }

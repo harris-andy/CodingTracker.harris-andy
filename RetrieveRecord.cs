@@ -1,61 +1,29 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
+using Microsoft.Data.Sqlite;
 
 namespace CodingTracker.harris_andy
 {
     public class RetrieveRecord
     {
-        public static void GetAllRecords(bool withIds)
+        public static void GetAllRecords()
         {
-            // Console.Clear();
-            // string sortMessage = "Sort records by\n1. ID\n2. Date";
-            // int sortOption = -1;
-            // while (sortOption < 0 || sortOption > 2)
-            // {
-            //     sortOption = validateNumberEntry(sortMessage);
-            // }
+            var sql = "SELECT Id, StartDayTime, EndDayTime, Activity FROM coding";
+            var sessions = new List<CodingSession>();
 
-            // using (SqliteConnection connection = new SqliteConnection(connectionString))
-            // {
-            //     List<HobbyRecord> hobbiesSortedID = new List<HobbyRecord>();
+            using var connection = new SqliteConnection(AppConfig.ConnectionString);
 
-            //     connection.Open();
-            //     using (SqliteCommand command = new SqliteCommand("SELECT * FROM habits", connection))
-            //     {
-            //         using (SqliteDataReader reader = command.ExecuteReader())
-            //         {
-            //             while (reader.Read())
-            //             {
-            //                 hobbiesSortedID.Add(new HobbyRecord
-            //                 {
-            //                     Id = reader.GetInt32(0),
-            //                     Date = DateTime.ParseExact(reader.GetString(1), format: "dd-MM-yyyy", new CultureInfo("en-US")),
-            //                     Hobby = reader.GetString(2),
-            //                     Units = reader.GetString(3),
-            //                     Quantity = reader.GetInt32(4)
-            //                 });
-            //             }
-            //         }
-            //     }
-            //     connection.Close();
-            //     Console.WriteLine("--------------------------------------------------\n");
-            //     Console.WriteLine("Here's all the fun stuff you did!\n");
-            //     if (hobbiesSortedID.Count == 0)
-            //     {
-            //         Console.WriteLine("No records found. Do stuff!");
-            //     }
-            //     var hobbiesSortedDate = hobbiesSortedID.OrderBy(record => record.Date).ToList();
-            //     foreach (HobbyRecord record in sortOption == 1 ? hobbiesSortedID : hobbiesSortedDate)
-            //     {
-            //         string outputByDate = $"{record.Date.ToString("dd-MMM-yyyy"),-13} {record.Hobby,-14} {record.Units,-5}: {record.Quantity,-5}";
-            //         string outputByID = $"{record.Id,-3}: {record.Date.ToString("dd-MMM-yyyy"),-13} {record.Hobby,-14} {record.Units,-5}: {record.Quantity,-5}";
-            //         if (sortOption == 1) Console.WriteLine(outputByID);
-            //         if (sortOption == 2) Console.WriteLine(outputByDate);
-            //     }
-            //     Console.WriteLine("--------------------------------------------------\n");
-            // }
+            sessions = connection.Query<CodingSession>(sql).ToList();
+
+            foreach (var session in sessions)
+            {
+                Console.WriteLine(session.Duration);
+            }
         }
 
         public static void GetRecordSummary()

@@ -153,28 +153,60 @@ namespace CodingTracker.harris_andy
 
             for (int randomRecord = 0; randomRecord < 100; randomRecord++)
             {
-                DateTime randomStartDate = RandomDateTime.GetRandomDate();
-                DateTime randomStartTime = RandomDateTime.GetRandomTime(randomStartDate);
-                DateTime randomEndTime = RandomDateTime.GetRandomEndTime(randomStartTime);
+                DateTime randomStartDay = RandomDateTime.RandomDate();
+                DateTime randomStartDateTime = RandomDateTime.RandomStartDateTime(randomStartDay);
+                DateTime randomEndDateTime = RandomDateTime.RandomEndDateTime(randomStartDateTime);
 
-                string startDate = randomStartDate.ToString("yyyy-MM-dd");
-                string endDate = randomEndTime.ToString("yyyy-MM-dd");
-                string startTime = randomStartTime.ToString("HH:mm:ss");
-                string endTime = randomEndTime.ToString("HH:mm:dd");
+                string startDateTime = randomStartDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                string endDateTime = randomEndDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                // string startTime = randomStartTime.ToString("HH:mm:ss");
+                // string endTime = randomEndTime.ToString("HH:mm:dd");
 
                 string activity = programmingActivities[random.Next(programmingActivities.Length)];
 
-                using (var command = new SqliteCommand("INSERT INTO coding (StartDate, EndDate, StartTime, EndTime, Activity) VALUES (@startDay, @endDay, @startTime, @endTime, @activity)", connection))
+                using (var command = new SqliteCommand("INSERT INTO coding (StartDayTime, EndDayTime, Activity) VALUES (@start, @end, @activity)", connection))
                 {
-                    command.Parameters.AddWithValue("@startDay", startDate);
-                    command.Parameters.AddWithValue("@endDay", endDate);
-                    command.Parameters.AddWithValue("@startTime", startTime);
-                    command.Parameters.AddWithValue("@endTime", endTime);
+                    command.Parameters.AddWithValue("@start", startDateTime);
+                    command.Parameters.AddWithValue("@end", endDateTime);
+                    // command.Parameters.AddWithValue("@startTime", startTime);
+                    // command.Parameters.AddWithValue("@endTime", endTime);
                     command.Parameters.AddWithValue("@activity", activity);
                     command.ExecuteNonQuery();
                 }
             }
             connection.Close();
         }
+
+        public static void InitializeDatabase()
+        {
+            using SqliteConnection connection = new SqliteConnection(AppConfig.ConnectionString);
+            connection.Open();
+            var tableCmd = connection.CreateCommand();
+
+            tableCmd.CommandText = @"CREATE TABLE IF NOT EXISTS coding (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                StartDayTime TEXT,
+                EndDayTime TEXT,
+                Activity TEXT
+                )";
+
+            // StartTime TEXT,
+            // EndTime TEXT,
+
+            tableCmd.ExecuteNonQuery();
+
+            // DBInteractions.DeleteTableContents();
+
+            using var command = new SqliteCommand("SELECT COUNT(*) FROM coding;", connection);
+
+            var count = Convert.ToInt32(command.ExecuteScalar());
+            if (count == 0)
+            {
+                PopulateDatabase();
+            }
+            connection.Close();
+        }
     }
+
+
 }

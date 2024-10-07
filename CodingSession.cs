@@ -7,20 +7,23 @@ namespace CodingTracker.harris_andy
 {
     public class CodingSession
     {
-        private int Id;
-        private DateTime StartTime;
-        private DateTime EndTime;
-        private int Duration;
+        public int Id { get; set; }
+        public required string StartDayTime { get; set; }
+        public required string EndDayTime { get; set; }
+        public string? Activity { get; set; }
 
-        public CodingSession(int id, DateTime startTime, DateTime endTime)
+        public DateTime StartDateTime => DateTime.Parse(StartDayTime);
+        public DateTime EndDateTime => DateTime.Parse(EndDayTime);
+        public int Duration => (int)(EndDateTime - StartDateTime).TotalMinutes;
+
+        public CodingSession() { }
+
+        public CodingSession(int id, string startDateTime, string endDateTime, string activity)
         {
             Id = id;
-            StartTime = startTime;
-            EndTime = endTime;
-
-            Duration = (int)(EndTime - StartTime).TotalMinutes;
+            StartDayTime = startDateTime;
+            EndDayTime = endDateTime;
+            Activity = activity;
         }
-
-
     }
 }
