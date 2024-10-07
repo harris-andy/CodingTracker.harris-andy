@@ -64,3 +64,5 @@ if (count == 0)
 }
 
 connection.Close();
+
+UserInput.MainMenu();

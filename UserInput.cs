@@ -7,15 +7,14 @@ namespace CodingTracker.harris_andy
 {
     public class UserInput
     {
-
-        public void MainMenu()
+        public static void MainMenu()
         {
             Console.Clear();
             bool closeApp = false;
-            bool withIds = false;
+            // bool withIds = false;
             while (closeApp == false)
             {
-                string message =
+                Console.WriteLine(
                     "--------------------------------------------------\n" +
                     "\n\t\tMAIN MENU\n\n" +
                     "\tWhat would you like to do?\n\n" +
@@ -27,14 +26,9 @@ namespace CodingTracker.harris_andy
                     "\tType 5 to View A Record Summary\n" +
                     "\tType 6 to Delete All Records :(\n" +
                     "\tType 7 to Add 100 Rows of Fake Data\n" +
-                    "--------------------------------------------------\n";
+                    "--------------------------------------------------\n");
 
-                int inputNumber = -1;
-                while (inputNumber < 0)
-                {
-                    inputNumber = validateNumberEntry(message, isMainMenu: true);
-                    Console.Clear();
-                }
+                int inputNumber = Spectre.GetMenuChoice();
 
                 switch (inputNumber)
                 {
@@ -44,7 +38,8 @@ namespace CodingTracker.harris_andy
                         Environment.Exit(0);
                         break;
                     case 1:
-                        RetrieveRecord.GetAllRecords(withIds);
+                        Console.WriteLine("FART");
+                        // RetrieveRecord.GetAllRecords();
                         break;
                     case 2:
                         DBInteractions.Insert();
