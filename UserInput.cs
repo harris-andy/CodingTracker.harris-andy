@@ -11,7 +11,6 @@ namespace CodingTracker.harris_andy
         {
             Console.Clear();
             bool closeApp = false;
-            // bool withIds = false;
             while (closeApp == false)
             {
                 Console.WriteLine(
@@ -38,7 +37,6 @@ namespace CodingTracker.harris_andy
                         Environment.Exit(0);
                         break;
                     case 1:
-                        // Console.WriteLine("FART");
                         RetrieveRecord.GetAllRecords();
                         break;
                     case 2:

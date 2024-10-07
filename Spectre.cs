@@ -28,5 +28,35 @@ namespace CodingTracker.harris_andy
 
             return number;
         }
+
+        public static void CreateTable(List<CodingSession> sessions)
+        {
+            // StartDateTime, EndDateTime, Activity, Duration, Id
+            var table = new Table();
+            table.AddColumn("ID").Centered();
+            table.AddColumn("Activity").Centered();
+            table.AddColumn("Start Day").Centered();
+            table.AddColumn("Start Time").Centered();
+            table.AddColumn("End Day").Centered();
+            table.AddColumn("End Time").Centered();
+            table.AddColumn("Duration").Centered();
+
+            foreach (var session in sessions)
+            {
+                table.AddRow(
+                    session.Id.ToString(),
+                    session.Activity ?? "N/A",
+                    session.StartDateTime.ToShortDateString(),
+                    session.StartDateTime.ToShortTimeString(),
+                    session.EndDateTime.ToShortDateString(),
+                    session.EndDateTime.ToShortTimeString(),
+                    $"{session.Duration} min"
+                );
+            }
+            Console.Clear();
+            AnsiConsole.Write(table);
+        }
+
+
     }
 }
