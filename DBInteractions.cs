@@ -15,27 +15,14 @@ namespace CodingTracker.harris_andy
         public static void Insert(DateTime startDateTime, DateTime endDateTime, string activity)
         {
             using var connection = new SqliteConnection(AppConfig.ConnectionString);
+            var parameters = new { start = startDateTime, end = endDateTime, activityEntry = activity };
+            var sql = "INSERT INTO coding (StartDayTime, EndDayTime, Activity) VALUES (@start, @end, @activityEntry)";
+            var result = connection.Query(sql, parameters);
 
-            connection.Open();
-            // var sql = "SELECT Id, StartDayTime, EndDayTime, Activity FROM coding";
-            // var dictionary = new Dictionary<string, object>
-            //     {
-            //         { "@ProductId", 1 }
-            //     };
-            // var parameters = new DynamicParameters(dictionary);
-            // var sql = "SELECT * FROM products WHERE ProductId = @ProductId";
-            // using (var connection = new SqlConnection(connectionString))
-            // {
-            //     var product = connection.QuerySingle<Product>(sql, parameters);
-            // }
-            using (var command = new SqliteCommand("INSERT INTO coding (StartDayTime, EndDayTime, Activity) VALUES (@start, @end, @activity)", connection))
-            {
-                command.Parameters.AddWithValue("@start", startDateTime);
-                command.Parameters.AddWithValue("@end", endDateTime);
-                command.Parameters.AddWithValue("@activity", activity);
-                command.ExecuteNonQuery();
-            }
-            connection.Close();
+            // Console.WriteLine("");
+            // Console.WriteLine($"Record insert! More data is gooder data.");
+            // Console.WriteLine("");
+            // Thread.Sleep(2000);
         }
 
         public static void Delete()
@@ -46,68 +33,43 @@ namespace CodingTracker.harris_andy
             {
                 using var connection = new SqliteConnection(AppConfig.ConnectionString);
                 var parameters = new { Id = recordID };
-                connection.Open();
                 var sql = "DELETE FROM coding WHERE Id = @Id";
                 var result = connection.Query(sql, parameters);
+
+                Console.WriteLine("");
+                Console.WriteLine($"Record {recordID} deleted! It was a stupid record anyway.");
+                Console.WriteLine("");
+                Thread.Sleep(2000);
             }
             else
             {
-                Console.WriteLine("Skipping deletion for now. Better to think about it.");
-                Thread.Sleep(1500);
+                UserInput.MainMenu();
             }
-
+            Console.Clear();
         }
 
         public static void Update()
         {
-            // Console.Clear();
-            // bool withIds = true;
-            // bool recordExists = false;
-            // GetAllRecords(withIds);
-            // string message = "Enter the ID number for the record you'd like to update. Or enter 0 to return to Main Menu.";
-            // int recordID = validateNumberEntry(message);
-            // if (recordID == 0) MainMenu();
+            (int recordID, bool confirmation) = UserInput.GetRecordID("update");
 
-            // using (var connection = new SqliteConnection(connectionString))
-            // {
-            //     connection.Open();
-            //     using (var command = new SqliteCommand("SELECT * FROM habits WHERE Id = @id", connection))
-            //     {
-            //         command.Parameters.AddWithValue("@id", recordID);
-            //         recordExists = Convert.ToInt32(command.ExecuteScalar()) > 0;
-            //     }
-            //     connection.Close();
-            // }
-            // if (!recordExists)
-            // {
-            //     Console.Clear();
-            //     Console.WriteLine("No record found with that ID. Try again.");
-            //     Thread.Sleep(2000);
-            //     Update();
-            // }
+            if (confirmation)
+            {
+                (DateTime startDateTime, DateTime endDateTime, string activity) = UserInput.GetSessionData();
+                using var connection = new SqliteConnection(AppConfig.ConnectionString);
+                var parameters = new { id = recordID, start = startDateTime, end = endDateTime, activityEntry = activity };
+                var sql = "UPDATE coding SET StartDayTime = @start, EndDayTime = @end, Activity = @activityEntry WHERE Id = @id";
+                var result = connection.Query(sql, parameters);
 
-            // Console.Clear();
-            // Console.WriteLine("Enter the updated record:");
-            // string date = GetDateInput();
-            // string hobby = GetHobby();
-            // string units = GetUnitsInput();
-            // int quantity = GetQuantityInput();
-
-            // using (var connection = new SqliteConnection(connectionString))
-            // {
-            //     connection.Open();
-            //     using (var command = new SqliteCommand("UPDATE habits SET date = @date, hobby = @hobby, units = @units, quantity = @quantity WHERE Id = @id", connection))
-            //     {
-            //         command.Parameters.AddWithValue("@id", recordID);
-            //         command.Parameters.AddWithValue("@date", date);
-            //         command.Parameters.AddWithValue("@hobby", hobby);
-            //         command.Parameters.AddWithValue("@units", units);
-            //         command.Parameters.AddWithValue("@quantity", quantity);
-            //         command.ExecuteNonQuery();
-            //     }
-            //     connection.Close();
-            // }
-            // Console.WriteLine($"Record ID {recordID} has been updated.");
+                Console.WriteLine("");
+                Console.WriteLine($"Record {recordID} updated! We're having so much fun.");
+                Console.WriteLine("");
+                Thread.Sleep(2000);
+            }
+            else
+            {
+                UserInput.MainMenu();
+            }
+            Console.Clear();
         }
 
         public static void DeleteTableContents()

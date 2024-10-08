@@ -41,13 +41,14 @@ namespace CodingTracker.harris_andy
                         RetrieveRecord.GetAllRecords();
                         break;
                     case 2:
-                        GetSessionData();
+                        (DateTime startDateTime, DateTime endDateTime, string activity) = GetSessionData();
+                        DBInteractions.Insert(startDateTime, endDateTime, activity);
                         break;
                     case 3:
                         DBInteractions.Delete();
                         break;
                     case 4:
-                        // DBInteractions.Update();
+                        DBInteractions.Update();
                         break;
                     case 5:
                         // RetrieveRecord.GetRecordSummary();
@@ -66,7 +67,7 @@ namespace CodingTracker.harris_andy
             }
         }
 
-        public static void GetSessionData()
+        public static (DateTime startDateTime, DateTime endDateTime, string activity) GetSessionData()
         {
             Console.Clear();
             DateTime date = GetDate();
@@ -78,7 +79,7 @@ namespace CodingTracker.harris_andy
             string activity = GetActivity();
             (DateTime startDateTime, DateTime endDateTime) = ParseDateTimes(date, startTime, endTime);
 
-            DBInteractions.Insert(startDateTime, endDateTime, activity);
+            return (startDateTime, endDateTime, activity);
         }
 
         public static int GetMenuChoice()
@@ -97,17 +98,19 @@ namespace CodingTracker.harris_andy
         public static (int, bool) GetRecordID(string option)
         {
             List<CodingSession> records = RetrieveRecord.GetAllRecords();
+            var validIDs = records.Select(r => r.Id).ToList();
             var recordID = AnsiConsole.Prompt(
             new TextPrompt<int>($"Which record do you want to {option}:")
             .Validate((n) =>
             {
-                if (n < 1 || n > records.Count)
+                if (validIDs.Contains(n))
                 {
-                    return ValidationResult.Error($"Record ID must be in the range 1-{records.Count}");
+                    // return ValidationResult.Error($"[red]Record ID must be in the range 1-{records[records.Count - 1].Id}[/]");
+                    return ValidationResult.Success();
                 }
                 else
                 {
-                    return ValidationResult.Success();
+                    return ValidationResult.Error($"[red]Must be a valid ID[/]");
                 }
             }));
 
@@ -118,6 +121,13 @@ namespace CodingTracker.harris_andy
                 .DefaultValue(true)
                 .WithConverter(choice => choice ? "y" : "n"));
 
+            if (!confirmation)
+            {
+                Console.WriteLine("");
+                Console.WriteLine($"Skipping {option} for now. Better to think about it.");
+                Console.WriteLine("");
+                Thread.Sleep(1500);
+            }
             return (recordID, confirmation);
         }
 
