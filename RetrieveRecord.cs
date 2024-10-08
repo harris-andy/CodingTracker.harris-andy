@@ -25,35 +25,43 @@ namespace CodingTracker.harris_andy
 
             return (columns, sessions);
         }
-        // Let the users filter their coding records per period (weeks, days, years) and/or order ascending or descending.
 
         public static void GetFilteredRecords()
         {
             string filterOption = UserInput.FilteredOptionsMenu();
-            (string[] columnsDefault, List<CodingSession> sessions) = GetRecords();
-            string[] columnsDays = ["Day", "Sessions", "Total Time", "Avg. Min/Session"];
+            (string[] _, List<CodingSession> sessions) = GetRecords();
+            string[] columnHeaders = ["", "Sessions", "Total Time", "Avg. Min/Session"];
+            columnHeaders[0] = filterOption == "day" ? "Day"
+                    : filterOption == "week" ? "Week Starting"
+                    : "Year";
 
-            var sessionsByDay = sessions
+            var groupedByDay = sessions
                 .GroupBy(session => session.StartDateTime.Date)
                 .OrderBy(s => s.Key)
                 .ToList();
 
             var groupedByWeek = sessions
                 .GroupBy(session =>
-                    CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(
-                        session.StartDateTime.Date,
-                        CalendarWeekRule.FirstFourDayWeek,
-                        DayOfWeek.Monday))
+                {
+                    var startDate = session.StartDateTime.Date;
+                    var weekOfYear = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(startDate, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+                    var year = startDate.Year;
+                    return new DateTime(year, 1, 1).AddDays((weekOfYear - 1) * 7);
+                })
                 .OrderBy(s => s.Key)
                 .ToList();
 
             var groupedByYear = sessions
-                .GroupBy(session => session.StartDateTime.Year)
-                .OrderBy(s => s.Key)
+                .GroupBy(session => new DateTime(session.StartDateTime.Year, 1, 1))
+                .OrderBy(g => g.Key)
                 .ToList();
 
             if (filterOption == "day")
-                UserInput.CreateTableFiltered(columnsDays, sessionsByDay);
+                UserInput.CreateTableFiltered(columnHeaders, groupedByDay, "day");
+            if (filterOption == "week")
+                UserInput.CreateTableFiltered(columnHeaders, groupedByWeek, "week");
+            if (filterOption == "year")
+                UserInput.CreateTableFiltered(columnHeaders, groupedByYear, "year");
         }
 
         public static void GetRecordSummary()

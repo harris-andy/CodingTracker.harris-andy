@@ -185,9 +185,9 @@ namespace CodingTracker.harris_andy
         {
             var table = new Table();
 
-            foreach (string columnTitle in columns)
+            foreach (string header in columns)
             {
-                table.AddColumn(columnTitle).Centered();
+                table.AddColumn(header).Centered();
             }
 
             foreach (var session in sessions)
@@ -208,29 +208,29 @@ namespace CodingTracker.harris_andy
             Console.Read();
         }
 
-        public static void CreateTableFiltered(string[] columns, List<IGrouping<DateTime, CodingSession>> sessions)
+        public static void CreateTableFiltered(string[] columns, List<IGrouping<DateTime, CodingSession>> sessions, string dateFormat)
         {
             var table = new Table();
 
-            foreach (string columnTitle in columns)
+            foreach (string header in columns)
             {
-                table.AddColumn(columnTitle).Centered();
+                table.AddColumn(header).Centered();
             }
 
             foreach (var group in sessions)
             {
-                // Console.WriteLine($"Day: {group.Key.ToString("dd-MM-yyyy")}");
                 int totalMinutes = group.Sum(session => session.Duration);
                 float averageMinutes = totalMinutes / (float)group.Count();
                 TimeSpan totalTime = TimeSpan.FromMinutes(totalMinutes);
                 int hours = (int)totalTime.TotalHours;
                 int minutes = totalTime.Minutes;
+                string dateRow = dateFormat == "year" ? group.Key.ToString("yyyy") : group.Key.ToShortDateString();
 
                 table.AddRow(
-                    group.Key.ToShortDateString(),
+                    dateRow,
                     group.Count().ToString(),
                     $"{hours}h {minutes}m",
-                    averageMinutes.ToString()
+                    $"{averageMinutes:F1}"
                 );
             }
             Console.Clear();
