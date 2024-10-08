@@ -47,8 +47,12 @@ namespace CodingTracker.harris_andy
 
         public static (DateTime, DateTime) ParseDateTimes(DateTime date, TimeSpan start, TimeSpan end)
         {
-            DateTime startDate = date.Add(start);
-            DateTime endDate = startDate.Add(end);
+            DateTime startDate = date.Date.Add(start);
+            DateTime endDate = date.Date.Add(end);
+            if (endDate < startDate)
+            {
+                endDate = endDate.AddDays(1);
+            }
             return (startDate, endDate);
         }
 

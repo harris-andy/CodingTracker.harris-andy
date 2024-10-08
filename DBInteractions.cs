@@ -12,16 +12,6 @@ namespace CodingTracker.harris_andy
     {
         public static void Insert(DateTime startDateTime, DateTime endDateTime, string activity)
         {
-            // Console.Clear();
-            // DateTime date = Spectre.GetDate();
-            // Console.Clear();
-            // TimeSpan startTime = Spectre.GetTime("start");
-            // Console.Clear();
-            // TimeSpan endTime = Spectre.GetTime("end");
-            // Console.Clear();
-            // string activity = Spectre.GetActivity();
-            // (DateTime startDateTime, DateTime endDateTime) = Spectre.ParseDateTimes(date, startTime, endTime);
-
             using var connection = new SqliteConnection(AppConfig.ConnectionString);
 
             connection.Open();
