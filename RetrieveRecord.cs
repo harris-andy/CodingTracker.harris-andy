@@ -13,11 +13,17 @@ namespace CodingTracker.harris_andy
     {
         public static List<CodingSession> GetRecords()
         {
+            string answer = UserInput.GetAllOrFiltered();
+
+            if (answer == "Filtered")
+            {
+                GetFilteredRecords();
+            }
+
             var sql = "SELECT Id, StartDayTime, EndDayTime, Activity FROM coding";
             using var connection = new SqliteConnection(AppConfig.ConnectionString);
             var sessions = connection.Query<CodingSession>(sql).ToList();
 
-            // StartDateTime, EndDateTime, Activity, Duration, Id
             UserInput.CreateTable(sessions);
             Console.WriteLine("Press any key to continue...");
             Console.Read();
@@ -26,10 +32,11 @@ namespace CodingTracker.harris_andy
         }
         // Let the users filter their coding records per period (weeks, days, years) and/or order ascending or descending.
 
-        // public static List<CodingSession> GetFilteredRecords()
-        // {
+        public static void GetFilteredRecords()
+        {
+            string filterOption = UserInput.FilteredOptionsMenu();
 
-        // }
+        }
 
         public static void GetRecordSummary()
         {

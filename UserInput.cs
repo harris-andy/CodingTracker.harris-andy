@@ -29,7 +29,7 @@ namespace CodingTracker.harris_andy
                     "\tType 8 to Start a Timed Coding Session. Neat!\n" +
                     "--------------------------------------------------\n");
 
-                int inputNumber = GetMenuChoice();
+                int inputNumber = GetMenuChoice(0, 8);
 
                 switch (inputNumber)
                 {
@@ -94,15 +94,17 @@ namespace CodingTracker.harris_andy
             return session;
         }
 
-        public static int GetMenuChoice()
+        public static int GetMenuChoice(int start, int end)
         {
             var menuChoice = AnsiConsole.Prompt(
             new TextPrompt<int>("Menu choice:")
-            .Validate((n) => n switch
+            .Validate((n) =>
             {
-                < 0 => ValidationResult.Error("[red]Invalid number. Must be 0-7[/]"),
-                > 7 => ValidationResult.Error("[red]Invalid number. Must be 0-7[/]"),
-                _ => ValidationResult.Success(),
+                if (start <= n && n <= end)
+                    return ValidationResult.Success();
+
+                else
+                    return ValidationResult.Error($"[red]Pick a valid option[/]");
             }));
             return menuChoice;
         }
@@ -200,6 +202,58 @@ namespace CodingTracker.harris_andy
             }
             Console.Clear();
             AnsiConsole.Write(table);
+        }
+
+        public static string GetAllOrFiltered()
+        {
+            var answer = AnsiConsole.Prompt(
+            new TextPrompt<string>("All records or filtered?")
+                .AddChoices(["All", "Filtered"]));
+            return answer;
+        }
+
+        public static string FilteredOptionsMenu()
+        {
+            Console.WriteLine(
+                    "--------------------------------------------------\n" +
+                    // "\n\t\tMAIN MENU\n\n" +
+                    "\tHow would you like your coding session summary?\n\n" +
+                    "\tType 0 to Back to Main Menu\n" +
+                    "\tType 1 to View Sessions by Day\n" +
+                    "\tType 2 to View Sessions by Week\n" +
+                    "\tType 3 to View Sessions by Year\n" +
+                    "\tType 4 to Select Specific Date Range\n" +
+                    // "\tType 5 to View A Record Summary\n" +
+                    // "\tType 6 to Delete All Records :(\n" +
+                    // "\tType 7 to Add 100 Rows of Fake Data\n" +
+                    // "\tType 8 to Start a Timed Coding Session. Neat!\n" +
+                    "--------------------------------------------------\n");
+
+            int inputNumber = GetMenuChoice(0, 4);
+            string filterOption = "";
+
+            switch (inputNumber)
+            {
+                case 0:
+                    MainMenu();
+                    break;
+                case 1:
+                    filterOption = "day";
+                    break;
+                case 2:
+                    filterOption = "week";
+                    break;
+                case 3:
+                    filterOption = "year";
+                    break;
+                case 4:
+                    filterOption = "dateRange";
+                    break;
+                default:
+                    MainMenu();
+                    break;
+            }
+            return filterOption;
         }
     }
 }
