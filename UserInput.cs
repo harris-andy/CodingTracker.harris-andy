@@ -40,7 +40,7 @@ namespace CodingTracker.harris_andy
                         RetrieveRecord.GetAllRecords();
                         break;
                     case 2:
-                        DBInteractions.Insert();
+                        GetSessionData();
                         break;
                     case 3:
                         DBInteractions.Delete();
@@ -63,6 +63,21 @@ namespace CodingTracker.harris_andy
                         break;
                 }
             }
+        }
+
+        public static void GetSessionData()
+        {
+            Console.Clear();
+            DateTime date = Spectre.GetDate();
+            Console.Clear();
+            TimeSpan startTime = Spectre.GetTime("start");
+            Console.Clear();
+            TimeSpan endTime = Spectre.GetTime("end");
+            Console.Clear();
+            string activity = Spectre.GetActivity();
+            (DateTime startDateTime, DateTime endDateTime) = Spectre.ParseDateTimes(date, startTime, endTime);
+
+            DBInteractions.Insert(startDateTime, endDateTime, activity);
         }
 
         // public string GetDateInput()

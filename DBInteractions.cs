@@ -10,31 +10,29 @@ namespace CodingTracker.harris_andy
 {
     public class DBInteractions
     {
-        public static void Insert()
+        public static void Insert(DateTime startDateTime, DateTime endDateTime, string activity)
         {
             // Console.Clear();
-            // string date = GetDateInput();
+            // DateTime date = Spectre.GetDate();
             // Console.Clear();
-            // string hobby = GetHobby();
+            // TimeSpan startTime = Spectre.GetTime("start");
             // Console.Clear();
-            // string units = GetUnitsInput();
+            // TimeSpan endTime = Spectre.GetTime("end");
             // Console.Clear();
-            // int quantity = GetQuantityInput();
+            // string activity = Spectre.GetActivity();
+            // (DateTime startDateTime, DateTime endDateTime) = Spectre.ParseDateTimes(date, startTime, endTime);
 
-            // using (var connection = new SqliteConnection(connectionString))
-            // {
-            //     connection.Open();
-            //     using (var command = new SqliteCommand("INSERT INTO habits (Date, Hobby, Units, Quantity) VALUES (@date, @hobby, @units, @quantity)", connection))
-            //     {
-            //         command.Parameters.AddWithValue("@date", date);
-            //         command.Parameters.AddWithValue("@hobby", hobby);
-            //         command.Parameters.AddWithValue("@units", units);
-            //         command.Parameters.AddWithValue("@quantity", quantity);
+            using var connection = new SqliteConnection(AppConfig.ConnectionString);
 
-            //         command.ExecuteNonQuery();
-            //     }
-            //     connection.Close();
-            // }
+            connection.Open();
+            using (var command = new SqliteCommand("INSERT INTO coding (StartDayTime, EndDayTime, Activity) VALUES (@start, @end, @activity)", connection))
+            {
+                command.Parameters.AddWithValue("@start", startDateTime);
+                command.Parameters.AddWithValue("@end", endDateTime);
+                command.Parameters.AddWithValue("@activity", activity);
+                command.ExecuteNonQuery();
+            }
+            connection.Close();
         }
 
         public static void Delete()
@@ -156,23 +154,9 @@ namespace CodingTracker.harris_andy
                 DateTime randomStartDay = RandomDateTime.RandomDate();
                 DateTime randomStartDateTime = RandomDateTime.RandomStartDateTime(randomStartDay);
                 DateTime randomEndDateTime = RandomDateTime.RandomEndDateTime(randomStartDateTime);
-
-                string startDateTime = randomStartDateTime.ToString("yyyy-MM-dd HH:mm:ss");
-                string endDateTime = randomEndDateTime.ToString("yyyy-MM-dd HH:mm:ss");
-                // string startTime = randomStartTime.ToString("HH:mm:ss");
-                // string endTime = randomEndTime.ToString("HH:mm:dd");
-
                 string activity = programmingActivities[random.Next(programmingActivities.Length)];
 
-                using (var command = new SqliteCommand("INSERT INTO coding (StartDayTime, EndDayTime, Activity) VALUES (@start, @end, @activity)", connection))
-                {
-                    command.Parameters.AddWithValue("@start", startDateTime);
-                    command.Parameters.AddWithValue("@end", endDateTime);
-                    // command.Parameters.AddWithValue("@startTime", startTime);
-                    // command.Parameters.AddWithValue("@endTime", endTime);
-                    command.Parameters.AddWithValue("@activity", activity);
-                    command.ExecuteNonQuery();
-                }
+                Insert(randomStartDateTime, randomEndDateTime, activity);
             }
             connection.Close();
         }
@@ -207,6 +191,4 @@ namespace CodingTracker.harris_andy
             connection.Close();
         }
     }
-
-
 }
