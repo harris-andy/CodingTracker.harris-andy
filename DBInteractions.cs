@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using Spectre.Console;
 using Dapper;
+using Microsoft.VisualBasic;
 
 
 namespace CodingTracker.harris_andy
@@ -17,12 +18,7 @@ namespace CodingTracker.harris_andy
             using var connection = new SqliteConnection(AppConfig.ConnectionString);
             var parameters = new { start = startDateTime, end = endDateTime, activityEntry = activity };
             var sql = "INSERT INTO coding (StartDayTime, EndDayTime, Activity) VALUES (@start, @end, @activityEntry)";
-            var result = connection.Query(sql, parameters);
-
-            // Console.WriteLine("");
-            // Console.WriteLine($"Record insert! More data is gooder data.");
-            // Console.WriteLine("");
-            // Thread.Sleep(2000);
+            connection.Execute(sql, parameters);
         }
 
         public static void Delete()
@@ -34,7 +30,7 @@ namespace CodingTracker.harris_andy
                 using var connection = new SqliteConnection(AppConfig.ConnectionString);
                 var parameters = new { Id = recordID };
                 var sql = "DELETE FROM coding WHERE Id = @Id";
-                var result = connection.Query(sql, parameters);
+                connection.Execute(sql, parameters);
 
                 Console.WriteLine("");
                 Console.WriteLine($"Record {recordID} deleted! It was a stupid record anyway.");
@@ -58,7 +54,7 @@ namespace CodingTracker.harris_andy
                 using var connection = new SqliteConnection(AppConfig.ConnectionString);
                 var parameters = new { id = recordID, start = startDateTime, end = endDateTime, activityEntry = activity };
                 var sql = "UPDATE coding SET StartDayTime = @start, EndDayTime = @end, Activity = @activityEntry WHERE Id = @id";
-                var result = connection.Query(sql, parameters);
+                connection.Execute(sql, parameters);
 
                 Console.WriteLine("");
                 Console.WriteLine($"Record {recordID} updated! We're having so much fun.");
@@ -75,7 +71,7 @@ namespace CodingTracker.harris_andy
         public static void DeleteTableContents()
         {
             Console.Clear();
-            string? verify = null;
+            bool confirmation = false;
             string[] prompts = {
                 "Are you SURE you want to delete all this data? y/n",
                 "Are you REALLY SUPER SURE? y/n",
@@ -84,25 +80,27 @@ namespace CodingTracker.harris_andy
 
             foreach (string prompt in prompts)
             {
-                Console.WriteLine(prompt);
-                verify = Console.ReadLine()?.ToLower();
-                if (verify != "y")
-                {
-                    return;
-                }
+                confirmation = AnsiConsole.Prompt(
+                new TextPrompt<bool>(prompt)
+                    .AddChoice(true)
+                    .AddChoice(false)
+                    .DefaultValue(true)
+                    .WithConverter(choice => choice ? "y" : "n"));
             }
 
-            using var connection = new SqliteConnection(AppConfig.ConnectionString);
-            connection.Open();
-            using (var command = new SqliteCommand("DELETE FROM coding;", connection))
+            if (confirmation)
             {
-                command.ExecuteNonQuery();
-            }
-            connection.Close();
+                using var connection = new SqliteConnection(AppConfig.ConnectionString);
+                var sql = @"
+                    DELETE FROM coding;
+                    DELETE FROM sqlite_sequence WHERE name = 'coding'";
+                connection.Execute(sql);
 
-            Console.WriteLine("\n\n");
-            Console.WriteLine("Whelp. It's all gone. Now what...?");
-            Thread.Sleep(2000);
+                Console.WriteLine("\n\n");
+                Console.WriteLine("Whelp. It's all gone. I hope none of that was important");
+                Thread.Sleep(2000);
+            }
+            Console.Clear();
         }
 
         public static void PopulateDatabase()
@@ -111,8 +109,6 @@ namespace CodingTracker.harris_andy
             string[] programmingActivities = ["c#", "python", "c++", "javascript", "frontend", "backend"];
 
             using var connection = new SqliteConnection(AppConfig.ConnectionString);
-            connection.Open();
-
             for (int randomRecord = 0; randomRecord < 100; randomRecord++)
             {
                 DateTime randomStartDay = RandomDateTime.RandomDate();
@@ -122,37 +118,24 @@ namespace CodingTracker.harris_andy
 
                 Insert(randomStartDateTime, randomEndDateTime, activity);
             }
-            connection.Close();
+            Console.Clear();
         }
 
         public static void InitializeDatabase()
         {
-            using SqliteConnection connection = new SqliteConnection(AppConfig.ConnectionString);
-            connection.Open();
-            var tableCmd = connection.CreateCommand();
-
-            tableCmd.CommandText = @"CREATE TABLE IF NOT EXISTS coding (
+            using var connection = new SqliteConnection(AppConfig.ConnectionString);
+            var createTable = @"CREATE TABLE IF NOT EXISTS coding (
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 StartDayTime TEXT,
                 EndDayTime TEXT,
                 Activity TEXT
                 )";
+            connection.Execute(createTable);
 
-            // StartTime TEXT,
-            // EndTime TEXT,
-
-            tableCmd.ExecuteNonQuery();
-
-            // DBInteractions.DeleteTableContents();
-
-            using var command = new SqliteCommand("SELECT COUNT(*) FROM coding;", connection);
-
-            var count = Convert.ToInt32(command.ExecuteScalar());
+            string sql = "SELECT COUNT(*) FROM coding";
+            int count = connection.ExecuteScalar<int>(sql);
             if (count == 0)
-            {
                 PopulateDatabase();
-            }
-            connection.Close();
         }
     }
 }

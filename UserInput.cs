@@ -54,7 +54,7 @@ namespace CodingTracker.harris_andy
                         // RetrieveRecord.GetRecordSummary();
                         break;
                     case 6:
-                        // DBInteractions.DeleteTableContents();
+                        DBInteractions.DeleteTableContents();
                         break;
                     case 7:
                         DBInteractions.PopulateDatabase();
@@ -99,19 +99,16 @@ namespace CodingTracker.harris_andy
         {
             List<CodingSession> records = RetrieveRecord.GetAllRecords();
             var validIDs = records.Select(r => r.Id).ToList();
+
             var recordID = AnsiConsole.Prompt(
             new TextPrompt<int>($"Which record do you want to {option}:")
             .Validate((n) =>
             {
                 if (validIDs.Contains(n))
-                {
-                    // return ValidationResult.Error($"[red]Record ID must be in the range 1-{records[records.Count - 1].Id}[/]");
                     return ValidationResult.Success();
-                }
+
                 else
-                {
                     return ValidationResult.Error($"[red]Must be a valid ID[/]");
-                }
             }));
 
             bool confirmation = AnsiConsole.Prompt(
