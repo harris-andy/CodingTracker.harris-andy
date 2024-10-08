@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Spectre.Console;
 
 namespace CodingTracker.harris_andy
 {
@@ -27,7 +28,7 @@ namespace CodingTracker.harris_andy
                     "\tType 7 to Add 100 Rows of Fake Data\n" +
                     "--------------------------------------------------\n");
 
-                int inputNumber = Spectre.GetMenuChoice();
+                int inputNumber = GetMenuChoice();
 
                 switch (inputNumber)
                 {
@@ -46,13 +47,13 @@ namespace CodingTracker.harris_andy
                         DBInteractions.Delete();
                         break;
                     case 4:
-                        DBInteractions.Update();
+                        // DBInteractions.Update();
                         break;
                     case 5:
-                        RetrieveRecord.GetRecordSummary();
+                        // RetrieveRecord.GetRecordSummary();
                         break;
                     case 6:
-                        DBInteractions.DeleteTableContents();
+                        // DBInteractions.DeleteTableContents();
                         break;
                     case 7:
                         DBInteractions.PopulateDatabase();
@@ -68,45 +69,119 @@ namespace CodingTracker.harris_andy
         public static void GetSessionData()
         {
             Console.Clear();
-            DateTime date = Spectre.GetDate();
+            DateTime date = GetDate();
             Console.Clear();
-            TimeSpan startTime = Spectre.GetTime("start");
+            TimeSpan startTime = GetTime("start");
             Console.Clear();
-            TimeSpan endTime = Spectre.GetTime("end");
+            TimeSpan endTime = GetTime("end");
             Console.Clear();
-            string activity = Spectre.GetActivity();
-            (DateTime startDateTime, DateTime endDateTime) = Spectre.ParseDateTimes(date, startTime, endTime);
+            string activity = GetActivity();
+            (DateTime startDateTime, DateTime endDateTime) = ParseDateTimes(date, startTime, endTime);
 
             DBInteractions.Insert(startDateTime, endDateTime, activity);
         }
 
-        // public string GetDateInput()
-        // {
-        // string? date = null;
-        // while (!DateTime.TryParseExact(date, format: "dd-MM-yyyy", new CultureInfo("en-US"), DateTimeStyles.None, out _))
-        // {
-        //     Console.WriteLine("Enter date in format dd-mm-yyyy. Press 0 to return to Main Menu");
-        //     date = Console.ReadLine();
-        //     if (int.TryParse(date, out int number))
-        //     {
-        //         if (number == 0) MainMenu();
-        //     }
-        // }
-        // return date;
-        // }
+        public static int GetMenuChoice()
+        {
+            var menuChoice = AnsiConsole.Prompt(
+            new TextPrompt<int>("Menu choice:")
+            .Validate((n) => n switch
+            {
+                < 0 => ValidationResult.Error("[red]Invalid number. Must be 0-7[/]"),
+                > 7 => ValidationResult.Error("[red]Invalid number. Must be 0-7[/]"),
+                _ => ValidationResult.Success(),
+            }));
+            return menuChoice;
+        }
 
-        // public string GetProgrammingActivity()
-        // {
-        // string? hobby = "";
-        // while (string.IsNullOrWhiteSpace(hobby))
-        // {
-        //     Console.WriteLine("Enter name of activity (keep it short). Or press 0 to return to Main Menu");
-        //     string? temp = Console.ReadLine();
-        //     hobby = temp?.Trim().ToLower();
-        // }
-        // if (hobby == "0") MainMenu();
-        // return hobby;
-        // }
+        public static (int, bool) GetRecordID(string option)
+        {
+            List<CodingSession> records = RetrieveRecord.GetAllRecords();
+            var recordID = AnsiConsole.Prompt(
+            new TextPrompt<int>($"Which record do you want to {option}:")
+            .Validate((n) =>
+            {
+                if (n < 1 || n > records.Count)
+                {
+                    return ValidationResult.Error($"Record ID must be in the range 1-{records.Count}");
+                }
+                else
+                {
+                    return ValidationResult.Success();
+                }
+            }));
+
+            bool confirmation = AnsiConsole.Prompt(
+            new TextPrompt<bool>($"Are you sure [red]{recordID}[/] is the record you want to [red]{option}[/]?")
+                .AddChoice(true)
+                .AddChoice(false)
+                .DefaultValue(true)
+                .WithConverter(choice => choice ? "y" : "n"));
+
+            return (recordID, confirmation);
+        }
+
+        public static DateTime GetDate()
+        {
+            DateTime date = AnsiConsole.Prompt(
+                new TextPrompt<DateTime>("Enter session date:"));
+            return date;
+        }
+
+        public static TimeSpan GetTime(string sessionTime)
+        {
+            TimeSpan time = AnsiConsole.Prompt(
+                new TextPrompt<TimeSpan>($"Enter {sessionTime} time:"));
+            return time;
+        }
+
+        public static string GetActivity()
+        {
+            string activity = AnsiConsole.Prompt(
+                new TextPrompt<string>("Enter your coding activity:")
+            );
+            return activity;
+        }
+
+        public static (DateTime, DateTime) ParseDateTimes(DateTime date, TimeSpan start, TimeSpan end)
+        {
+            DateTime startDate = date.Date.Add(start);
+            DateTime endDate = date.Date.Add(end);
+            if (endDate < startDate)
+            {
+                endDate = endDate.AddDays(1);
+            }
+            return (startDate, endDate);
+        }
+
+        public static void CreateTable(List<CodingSession> sessions)
+        {
+            // StartDateTime, EndDateTime, Activity, Duration, Id
+            // PASS IN LIST OF COLUMN NAMES TO MAKE COLUMNS DYNAMIC
+            var table = new Table();
+            table.AddColumn("ID").Centered();
+            table.AddColumn("Activity").Centered();
+            table.AddColumn("Start Day").Centered();
+            table.AddColumn("Start Time").Centered();
+            table.AddColumn("End Day").Centered();
+            table.AddColumn("End Time").Centered();
+            table.AddColumn("Duration").Centered();
+
+            foreach (var session in sessions)
+            {
+                table.AddRow(
+                    session.Id.ToString(),
+                    session.Activity ?? "N/A",
+                    session.StartDateTime.ToShortDateString(),
+                    session.StartDateTime.ToShortTimeString(),
+                    session.EndDateTime.ToShortDateString(),
+                    session.EndDateTime.ToShortTimeString(),
+                    $"{session.Duration} min"
+                );
+            }
+            Console.Clear();
+            AnsiConsole.Write(table);
+        }
 
     }
 }

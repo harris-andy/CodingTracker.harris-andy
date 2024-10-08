@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
+using Spectre.Console;
+using Dapper;
 
 
 namespace CodingTracker.harris_andy
@@ -15,6 +17,17 @@ namespace CodingTracker.harris_andy
             using var connection = new SqliteConnection(AppConfig.ConnectionString);
 
             connection.Open();
+            // var sql = "SELECT Id, StartDayTime, EndDayTime, Activity FROM coding";
+            // var dictionary = new Dictionary<string, object>
+            //     {
+            //         { "@ProductId", 1 }
+            //     };
+            // var parameters = new DynamicParameters(dictionary);
+            // var sql = "SELECT * FROM products WHERE ProductId = @ProductId";
+            // using (var connection = new SqlConnection(connectionString))
+            // {
+            //     var product = connection.QuerySingle<Product>(sql, parameters);
+            // }
             using (var command = new SqliteCommand("INSERT INTO coding (StartDayTime, EndDayTime, Activity) VALUES (@start, @end, @activity)", connection))
             {
                 command.Parameters.AddWithValue("@start", startDateTime);
@@ -27,23 +40,22 @@ namespace CodingTracker.harris_andy
 
         public static void Delete()
         {
-            // Console.Clear();
-            // bool withIds = true;
-            // GetAllRecords(withIds);
-            // string message = "Enter the ID number for the record you'd like to delete. Or enter 0 to return to Main Menu.";
-            // int recordID = validateNumberEntry(message);
+            (int recordID, bool confirmation) = UserInput.GetRecordID("delete");
 
-            // using (var connection = new SqliteConnection(connectionString))
-            // {
-            //     connection.Open();
-            //     using (var command = new SqliteCommand("DELETE FROM habits WHERE ID = @id", connection))
-            //     {
-            //         command.Parameters.AddWithValue("@id", recordID);
-            //         command.ExecuteNonQuery();
-            //     }
-            //     connection.Close();
-            // }
-            // Console.WriteLine($"Record ID {recordID} has been deleted.");
+            if (confirmation)
+            {
+                using var connection = new SqliteConnection(AppConfig.ConnectionString);
+                var parameters = new { Id = recordID };
+                connection.Open();
+                var sql = "DELETE FROM coding WHERE Id = @Id";
+                var result = connection.Query(sql, parameters);
+            }
+            else
+            {
+                Console.WriteLine("Skipping deletion for now. Better to think about it.");
+                Thread.Sleep(1500);
+            }
+
         }
 
         public static void Update()
