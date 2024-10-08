@@ -39,7 +39,13 @@ namespace CodingTracker.harris_andy
                         Environment.Exit(0);
                         break;
                     case 1:
-                        RetrieveRecord.GetRecords();
+                        int answer = GetAllOrFiltered();
+                        if (answer == 1)
+                        {
+                            (string[] columns, List<CodingSession> sessions) = RetrieveRecord.GetRecords();
+                            CreateTable(columns, sessions);
+                        }
+                        else if (answer == 2) RetrieveRecord.GetFilteredRecords();
                         break;
                     case 2:
                         // (DateTime startDateTime, DateTime endDateTime, string activity) = GetSessionData();
@@ -111,7 +117,7 @@ namespace CodingTracker.harris_andy
 
         public static (int, bool) GetRecordID(string option)
         {
-            List<CodingSession> records = RetrieveRecord.GetRecords();
+            (string[] columns, List<CodingSession> records) = RetrieveRecord.GetRecords();
             var validIDs = records.Select(r => r.Id).ToList();
 
             var recordID = AnsiConsole.Prompt(
@@ -175,18 +181,14 @@ namespace CodingTracker.harris_andy
             return (startDate, endDate);
         }
 
-        public static void CreateTable(List<CodingSession> sessions)
+        public static void CreateTable(string[] columns, List<CodingSession> sessions)
         {
-            // StartDateTime, EndDateTime, Activity, Duration, Id
-            // PASS IN LIST OF COLUMN NAMES TO MAKE COLUMNS DYNAMIC
             var table = new Table();
-            table.AddColumn("ID").Centered();
-            table.AddColumn("Activity").Centered();
-            table.AddColumn("Start Day").Centered();
-            table.AddColumn("Start Time").Centered();
-            table.AddColumn("End Day").Centered();
-            table.AddColumn("End Time").Centered();
-            table.AddColumn("Duration").Centered();
+
+            foreach (string columnTitle in columns)
+            {
+                table.AddColumn(columnTitle).Centered();
+            }
 
             foreach (var session in sessions)
             {
@@ -202,13 +204,22 @@ namespace CodingTracker.harris_andy
             }
             Console.Clear();
             AnsiConsole.Write(table);
+            Console.WriteLine("Press any key to continue...");
+            Console.Read();
         }
 
-        public static string GetAllOrFiltered()
+        public static int GetAllOrFiltered()
         {
-            var answer = AnsiConsole.Prompt(
-            new TextPrompt<string>("All records or filtered?")
-                .AddChoices(["All", "Filtered"]));
+            int answer = AnsiConsole.Prompt(
+            new TextPrompt<int>("1. All Records\n2. Filtered Records\nEnter choice:")
+            .Validate((n) =>
+            {
+                if (n == 1 || n == 2)
+                    return ValidationResult.Success();
+                else
+                    return ValidationResult.Error("[red]Invalid number[/]");
+            }));
+            Console.Clear();
             return answer;
         }
 
