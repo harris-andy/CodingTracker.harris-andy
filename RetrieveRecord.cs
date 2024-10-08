@@ -11,7 +11,7 @@ namespace CodingTracker.harris_andy
 {
     public class RetrieveRecord
     {
-        public static List<CodingSession> GetAllRecords()
+        public static List<CodingSession> GetRecords()
         {
             var sql = "SELECT Id, StartDayTime, EndDayTime, Activity FROM coding";
             using var connection = new SqliteConnection(AppConfig.ConnectionString);
@@ -24,6 +24,12 @@ namespace CodingTracker.harris_andy
 
             return sessions;
         }
+        // Let the users filter their coding records per period (weeks, days, years) and/or order ascending or descending.
+
+        // public static List<CodingSession> GetFilteredRecords()
+        // {
+
+        // }
 
         public static void GetRecordSummary()
         {

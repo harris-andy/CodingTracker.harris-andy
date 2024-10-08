@@ -13,10 +13,11 @@ namespace CodingTracker.harris_andy
 {
     public class DBInteractions
     {
-        public static void Insert(DateTime startDateTime, DateTime endDateTime, string activity)
+        // public static void Insert(DateTime startDateTime, DateTime endDateTime, string activity)
+        public static void Insert(CodingSession session)
         {
             using var connection = new SqliteConnection(AppConfig.ConnectionString);
-            var parameters = new { start = startDateTime, end = endDateTime, activityEntry = activity };
+            var parameters = new { start = session.StartDateTime, end = session.EndDateTime, activityEntry = session.Activity };
             var sql = "INSERT INTO coding (StartDayTime, EndDayTime, Activity) VALUES (@start, @end, @activityEntry)";
             connection.Execute(sql, parameters);
         }
@@ -50,9 +51,10 @@ namespace CodingTracker.harris_andy
 
             if (confirmation)
             {
-                (DateTime startDateTime, DateTime endDateTime, string activity) = UserInput.GetSessionData();
+                // (DateTime startDateTime, DateTime endDateTime, string activity) = UserInput.GetSessionData();
+                CodingSession session = UserInput.GetSessionData();
                 using var connection = new SqliteConnection(AppConfig.ConnectionString);
-                var parameters = new { id = recordID, start = startDateTime, end = endDateTime, activityEntry = activity };
+                var parameters = new { id = recordID, start = session.StartDateTime, end = session.EndDateTime, activityEntry = session.Activity };
                 var sql = "UPDATE coding SET StartDayTime = @start, EndDayTime = @end, Activity = @activityEntry WHERE Id = @id";
                 connection.Execute(sql, parameters);
 
@@ -109,14 +111,19 @@ namespace CodingTracker.harris_andy
             string[] programmingActivities = ["c#", "python", "c++", "javascript", "frontend", "backend"];
 
             using var connection = new SqliteConnection(AppConfig.ConnectionString);
-            for (int randomRecord = 0; randomRecord < 100; randomRecord++)
+            for (int i = 0; i < 100; i++)
             {
                 DateTime randomStartDay = RandomDateTime.RandomDate();
                 DateTime randomStartDateTime = RandomDateTime.RandomStartDateTime(randomStartDay);
                 DateTime randomEndDateTime = RandomDateTime.RandomEndDateTime(randomStartDateTime);
                 string activity = programmingActivities[random.Next(programmingActivities.Length)];
-
-                Insert(randomStartDateTime, randomEndDateTime, activity);
+                CodingSession session = new CodingSession
+                {
+                    StartDayTime = randomStartDateTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                    EndDayTime = randomEndDateTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                    Activity = activity
+                };
+                Insert(session);
             }
             Console.Clear();
         }

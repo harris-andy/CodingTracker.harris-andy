@@ -16,9 +16,9 @@ namespace CodingTracker.harris_andy
         public int Duration => (int)(EndDateTime - StartDateTime).TotalMinutes;
         public CodingSession() { }
 
-        public CodingSession(int id, string startDateTime, string endDateTime, string activity)
+        public CodingSession(string startDateTime, string endDateTime, string activity)
         {
-            Id = id;
+            // Id = id;
             StartDayTime = startDateTime;
             EndDayTime = endDateTime;
             Activity = activity;

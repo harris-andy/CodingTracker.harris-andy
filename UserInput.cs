@@ -26,6 +26,7 @@ namespace CodingTracker.harris_andy
                     "\tType 5 to View A Record Summary\n" +
                     "\tType 6 to Delete All Records :(\n" +
                     "\tType 7 to Add 100 Rows of Fake Data\n" +
+                    "\tType 8 to Start a Timed Coding Session. Neat!\n" +
                     "--------------------------------------------------\n");
 
                 int inputNumber = GetMenuChoice();
@@ -38,11 +39,12 @@ namespace CodingTracker.harris_andy
                         Environment.Exit(0);
                         break;
                     case 1:
-                        RetrieveRecord.GetAllRecords();
+                        RetrieveRecord.GetRecords();
                         break;
                     case 2:
-                        (DateTime startDateTime, DateTime endDateTime, string activity) = GetSessionData();
-                        DBInteractions.Insert(startDateTime, endDateTime, activity);
+                        // (DateTime startDateTime, DateTime endDateTime, string activity) = GetSessionData();
+                        CodingSession session = GetSessionData();
+                        DBInteractions.Insert(session);
                         break;
                     case 3:
                         DBInteractions.Delete();
@@ -59,6 +61,8 @@ namespace CodingTracker.harris_andy
                     case 7:
                         DBInteractions.PopulateDatabase();
                         break;
+                    case 8:
+                        break;
                     default:
                         Console.Clear();
                         Console.WriteLine("\nInvalid Command. Give me number!");
@@ -67,7 +71,8 @@ namespace CodingTracker.harris_andy
             }
         }
 
-        public static (DateTime startDateTime, DateTime endDateTime, string activity) GetSessionData()
+        // public static (DateTime startDateTime, DateTime endDateTime, string activity) GetSessionData()
+        public static CodingSession GetSessionData()
         {
             Console.Clear();
             DateTime date = GetDate();
@@ -79,7 +84,14 @@ namespace CodingTracker.harris_andy
             string activity = GetActivity();
             (DateTime startDateTime, DateTime endDateTime) = ParseDateTimes(date, startTime, endTime);
 
-            return (startDateTime, endDateTime, activity);
+            CodingSession session = new CodingSession
+            {
+                StartDayTime = startDateTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                EndDayTime = endDateTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                Activity = activity
+            };
+            // return (startDateTime, endDateTime, activity);
+            return session;
         }
 
         public static int GetMenuChoice()
@@ -97,7 +109,7 @@ namespace CodingTracker.harris_andy
 
         public static (int, bool) GetRecordID(string option)
         {
-            List<CodingSession> records = RetrieveRecord.GetAllRecords();
+            List<CodingSession> records = RetrieveRecord.GetRecords();
             var validIDs = records.Select(r => r.Id).ToList();
 
             var recordID = AnsiConsole.Prompt(
@@ -189,6 +201,5 @@ namespace CodingTracker.harris_andy
             Console.Clear();
             AnsiConsole.Write(table);
         }
-
     }
 }
