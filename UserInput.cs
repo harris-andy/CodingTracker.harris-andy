@@ -208,6 +208,37 @@ namespace CodingTracker.harris_andy
             Console.Read();
         }
 
+        public static void CreateTableFiltered(string[] columns, List<IGrouping<DateTime, CodingSession>> sessions)
+        {
+            var table = new Table();
+
+            foreach (string columnTitle in columns)
+            {
+                table.AddColumn(columnTitle).Centered();
+            }
+
+            foreach (var group in sessions)
+            {
+                // Console.WriteLine($"Day: {group.Key.ToString("dd-MM-yyyy")}");
+                int totalMinutes = group.Sum(session => session.Duration);
+                float averageMinutes = totalMinutes / (float)group.Count();
+                TimeSpan totalTime = TimeSpan.FromMinutes(totalMinutes);
+                int hours = (int)totalTime.TotalHours;
+                int minutes = totalTime.Minutes;
+
+                table.AddRow(
+                    group.Key.ToShortDateString(),
+                    group.Count().ToString(),
+                    $"{hours}h {minutes}m",
+                    averageMinutes.ToString()
+                );
+            }
+            Console.Clear();
+            AnsiConsole.Write(table);
+            Console.WriteLine("Press any key to continue...");
+            Console.Read();
+        }
+
         public static int GetAllOrFiltered()
         {
             int answer = AnsiConsole.Prompt(

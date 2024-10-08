@@ -30,42 +30,30 @@ namespace CodingTracker.harris_andy
         public static void GetFilteredRecords()
         {
             string filterOption = UserInput.FilteredOptionsMenu();
-            (string[] columns, List<CodingSession> sessions) = GetRecords();
+            (string[] columnsDefault, List<CodingSession> sessions) = GetRecords();
+            string[] columnsDays = ["Day", "Sessions", "Total Time", "Avg. Min/Session"];
 
             var sessionsByDay = sessions
                 .GroupBy(session => session.StartDateTime.Date)
-                .OrderByDescending(s => s.Key);
+                .OrderBy(s => s.Key)
+                .ToList();
 
-            var groupedByWeek = sessions.GroupBy(session =>
-                CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(
-                    session.StartDateTime.Date,
-                    CalendarWeekRule.FirstFourDayWeek,
-                    DayOfWeek.Monday
-                ));
+            var groupedByWeek = sessions
+                .GroupBy(session =>
+                    CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(
+                        session.StartDateTime.Date,
+                        CalendarWeekRule.FirstFourDayWeek,
+                        DayOfWeek.Monday))
+                .OrderBy(s => s.Key)
+                .ToList();
 
-            var groupedByYear = sessions.GroupBy(session => session.StartDateTime.Year);
+            var groupedByYear = sessions
+                .GroupBy(session => session.StartDateTime.Year)
+                .OrderBy(s => s.Key)
+                .ToList();
 
-            List<CodingSession> orderedDaySessions = new List<CodingSession>();
-            foreach (var group in sessionsByDay)
-            {
-                foreach (CodingSession session in group)
-                {
-                    orderedDaySessions.Add(session);
-                }
-            }
-
-            // foreach (var group in sessionsByDay)
-            // {
-            //     Console.WriteLine($"Day: {group.Key.ToString("dd-MM-yyyy")}");
-            //     int totalMinutes = group.Sum(session => session.Duration);
-            //     float averageMinutes = totalMinutes / (float)group.Count();
-            //     TimeSpan totalTime = TimeSpan.FromMinutes(totalMinutes);
-            //     int hours = (int)totalTime.TotalHours;
-            //     int minutes = totalTime.Minutes;
-            //     string hoursString = hours == 0 ? "" : $"{hours} hours";
-            //     Console.WriteLine($"Total time spent coding: {hoursString} {minutes} minutes");
-            //     Console.WriteLine($"Average time per session: {averageMinutes}\n");
-            // }
+            if (filterOption == "day")
+                UserInput.CreateTableFiltered(columnsDays, sessionsByDay);
         }
 
         public static void GetRecordSummary()
