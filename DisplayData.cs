@@ -76,5 +76,35 @@ namespace CodingTracker.harris_andy
             Console.WriteLine("Press any key to continue...");
             Console.Read();
         }
+
+        public static void LiveSessionProgress()
+        {
+            AnsiConsole.Progress()
+                // .AutoRefresh(false) // Turn off auto refresh
+                // .AutoClear(false)   // Do not remove the task list when done
+                // .HideCompleted(false)   // Hide tasks as they are completed
+                // .Columns(new ProgressColumn[]
+                // {
+                //     new TaskDescriptionColumn(),    // Task description
+                //     new ProgressBarColumn(),        // Progress bar
+                //     new PercentageColumn(),         // Percentage
+                //     new RemainingTimeColumn(),      // Remaining time
+                //     new SpinnerColumn(),            // Spinner
+                // })
+                .Start(ctx =>
+                {
+                    // Define tasks
+                    var task1 = ctx.AddTask("[green]Reticulating splines[/]");
+                    var task2 = ctx.AddTask("[green]Folding space[/]");
+
+                    while (!ctx.IsFinished)
+                    {
+                        task1.Increment(1.5);
+                        task2.Increment(0.5);
+
+                        Task.Delay(10);
+                    }
+                });
+        }
     }
 }

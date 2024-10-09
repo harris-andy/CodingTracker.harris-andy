@@ -20,13 +20,14 @@ namespace CodingTracker.harris_andy
                     "\tWhat would you like to do?\n\n" +
                     "\tType 0 to Close Application\n" +
                     "\tType 1 to View All Records\n" +
-                    "\tType 2 to Insert Record\n" +
-                    "\tType 3 to Delete Record\n" +
-                    "\tType 4 to Update Record\n" +
-                    "\tType 5 to View A Record Summary\n" +
+                    "\tType 2 to View Records by Date Range\n" +
+                    "\tType 3 to Insert Record\n" +
+                    "\tType 4 to Delete Record\n" +
+                    "\tType 5 to Update Record\n" +
                     "\tType 6 to Delete All Records :(\n" +
                     "\tType 7 to Add 100 Rows of Fake Data\n" +
                     "\tType 8 to Start a Timed Coding Session. Neat!\n" +
+                    "\tType 9 to Set a Coding Goal\n" +
                     "--------------------------------------------------\n");
 
                 int inputNumber = GetMenuChoice(0, 8);
@@ -39,27 +40,21 @@ namespace CodingTracker.harris_andy
                         Environment.Exit(0);
                         break;
                     case 1:
-                        int answer = GetAllOrFiltered();
-                        if (answer == 1)
-                        {
-                            List<CodingSession> sessions = RetrieveRecord.GetRecords();
-                            DisplayData.CreateTable(sessions);
-                        }
-                        else if (answer == 2) RetrieveRecord.GetFilteredRecords();
+                        List<CodingSession> sessions = RetrieveRecord.GetRecords();
+                        DisplayData.CreateTable(sessions);
                         break;
                     case 2:
-                        // (DateTime startDateTime, DateTime endDateTime, string activity) = GetSessionData();
+                        RetrieveRecord.GetFilteredRecords();
+                        break;
+                    case 3:
                         CodingSession session = GetSessionData();
                         DBInteractions.Insert(session);
                         break;
-                    case 3:
+                    case 4:
                         DBInteractions.Delete();
                         break;
-                    case 4:
-                        DBInteractions.Update();
-                        break;
                     case 5:
-                        // RetrieveRecord.GetRecordSummary();
+                        DBInteractions.Update();
                         break;
                     case 6:
                         DBInteractions.DeleteTableContents();
@@ -68,6 +63,10 @@ namespace CodingTracker.harris_andy
                         DBInteractions.PopulateDatabase();
                         break;
                     case 8:
+                        DisplayData.LiveSessionProgress();
+                        break;
+                    case 9:
+                        GetCodingGoal();
                         break;
                     default:
                         Console.Clear();
@@ -77,11 +76,10 @@ namespace CodingTracker.harris_andy
             }
         }
 
-        // public static (DateTime startDateTime, DateTime endDateTime, string activity) GetSessionData()
         public static CodingSession GetSessionData()
         {
             Console.Clear();
-            DateTime date = GetDate();
+            DateTime date = GetDate("session");
             Console.Clear();
             TimeSpan startTime = GetTime("start");
             Console.Clear();
@@ -149,10 +147,10 @@ namespace CodingTracker.harris_andy
             return (recordID, confirmation);
         }
 
-        public static DateTime GetDate()
+        public static DateTime GetDate(string option)
         {
             DateTime date = AnsiConsole.Prompt(
-                new TextPrompt<DateTime>("Enter session date:"));
+                new TextPrompt<DateTime>($"Enter {option} date:"));
             return date;
         }
 
@@ -182,89 +180,20 @@ namespace CodingTracker.harris_andy
             return (startDate, endDate);
         }
 
-        // public static void CreateTable(List<CodingSession> sessions)
+        // public static int GetAllOrFiltered()
         // {
-        //     var table = new Table();
-
-        //     table.BorderColor(Color.DarkSlateGray1);
-        //     table.Border(TableBorder.Rounded);
-
-        //     table.AddColumn(new TableColumn("[cyan1]ID[/]").LeftAligned());
-        //     table.AddColumn(new TableColumn("[blue1]Activity[/]").RightAligned());
-        //     table.AddColumn(new TableColumn("[green1]Start Day[/]").RightAligned());
-        //     table.AddColumn(new TableColumn("[green1]Start Time[/]").RightAligned());
-        //     table.AddColumn(new TableColumn("[red1]End Day[/]").RightAligned());
-        //     table.AddColumn(new TableColumn("[red1]End Time[/]").RightAligned());
-        //     table.AddColumn(new TableColumn("[yellow1]Duration (min)[/]").LeftAligned());
-
-        //     bool isAlternateRow = false;
-        //     foreach (var session in sessions)
-        //     {
-        //         var color = isAlternateRow ? "grey" : "blue";
-        //         table.AddRow(
-        //             $"[{color}]{session.Id.ToString()}[/]",
-        //             $"[{color}]{session.Activity ?? "N/A"}[/]",
-        //             $"[{color}]{session.StartDateTime.ToShortDateString()}[/]",
-        //             $"[{color}]{session.StartDateTime.ToShortTimeString()}[/]",
-        //             $"[{color}]{session.EndDateTime.ToShortDateString()}[/]",
-        //             $"[{color}]{session.EndDateTime.ToShortTimeString()}[/]",
-        //             $"[{color}]{session.Duration}min[/]"
-        //         );
-        //         isAlternateRow = !isAlternateRow;
-        //     }
+        //     int answer = AnsiConsole.Prompt(
+        //     new TextPrompt<int>("1. All Records\n2. Filtered Records\nEnter choice:")
+        //         .Validate((n) =>
+        //         {
+        //             if (n == 1 || n == 2)
+        //                 return ValidationResult.Success();
+        //             else
+        //                 return ValidationResult.Error("[red]Invalid number[/]");
+        //         }));
         //     Console.Clear();
-        //     AnsiConsole.Write(table);
-        //     Console.WriteLine("Press any key to continue...");
-        //     Console.Read();
+        //     return answer;
         // }
-
-        // public static void CreateTableFiltered(List<SummaryReport> reports, string dateFilter)
-        // {
-        //     var table = new Table();
-
-        //     table.BorderColor(Color.DarkSlateGray1);
-        //     table.Border(TableBorder.Rounded);
-
-        //     table.AddColumn(new TableColumn($"[cyan1]{dateFilter}[/]").LeftAligned());
-        //     table.AddColumn(new TableColumn("[green1]Total Time (min)[/]").RightAligned());
-        //     table.AddColumn(new TableColumn("[green1]Avg Time (min)[/]").RightAligned());
-        //     table.AddColumn(new TableColumn("[blue1]Sessions[/]").RightAligned());
-        //     table.AddColumn(new TableColumn("[magenta1]Activities[/]").LeftAligned());
-
-        //     bool isAlternateRow = false;
-        //     foreach (var row in reports)
-        //     {
-        //         string formattedActivities = string.Join(", ", row.Activity.Split(','));
-        //         var color = isAlternateRow ? "grey" : "blue";
-
-        //         table.AddRow(
-        //             $"[{color}]{row.DateRange}[/]",
-        //             $"[{color}]{row.TotalTime:F1}[/]",
-        //             $"[{color}]{row.AvgTime:F1}[/]",
-        //             $"[{color}]{row.Sessions}[/]",
-        //             $"[{color}]{formattedActivities}[/]"
-        //         );
-        //         isAlternateRow = !isAlternateRow;
-        //     }
-        //     AnsiConsole.Write(table);
-        //     Console.WriteLine("Press any key to continue...");
-        //     Console.Read();
-        // }
-
-        public static int GetAllOrFiltered()
-        {
-            int answer = AnsiConsole.Prompt(
-            new TextPrompt<int>("1. All Records\n2. Filtered Records\nEnter choice:")
-                .Validate((n) =>
-                {
-                    if (n == 1 || n == 2)
-                        return ValidationResult.Success();
-                    else
-                        return ValidationResult.Error("[red]Invalid number[/]");
-                }));
-            Console.Clear();
-            return answer;
-        }
 
         public static string FilteredOptionsMenu()
         {
@@ -303,6 +232,40 @@ namespace CodingTracker.harris_andy
                     break;
             }
             return filterOption;
+        }
+
+        public static CodingGoal GetCodingGoal()
+        {
+            // int goalTimeForm = AnsiConsole.Prompt(
+            // new TextPrompt<int>("Set Coding Goal Date Range:\n1. Day\n2. Week\n3. Year\nEnter choice:")
+            //     .Validate((n) =>
+            //     {
+            //         if (n <= 3 && n >= 1)
+            //             return ValidationResult.Success();
+            //         else
+            //             return ValidationResult.Error("[red]Invalid number[/]");
+            //     }));
+
+            // string goalTimeForm = AnsiConsole.Prompt(
+            //     new TextPrompt<string>("Set your coding goal time format:")
+            //     .AddChoices(["Day", "Week", "Year"]));
+
+            DateTime startDate = GetDate("coding goal start");
+            DateTime endDate = GetDate("coding goal end");
+
+            float goalHours = AnsiConsole.Prompt(
+            new TextPrompt<float>("What's your coding goal?\nEnter hours:")
+                .Validate((n) =>
+                {
+                    if (n >= 0)
+                        return ValidationResult.Success();
+                    else
+                        return ValidationResult.Error("[red]Invalid number[/]");
+                }));
+
+            CodingGoal goal = new CodingGoal(startDate, endDate, goalHours);
+
+            return goal;
         }
     }
 }

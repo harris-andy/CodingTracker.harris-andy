@@ -22,6 +22,17 @@ namespace CodingTracker.harris_andy
             connection.Execute(sql, parameters);
         }
 
+        public static void InsertCodingGoal(CodingGoal goal)
+        {
+            // GoalTimeForm = timeForm;
+            // GoalHours = hours;
+            // GoalStartDate = startDate;
+            using var connection = new SqliteConnection(AppConfig.ConnectionString);
+            var parameters = new { start = goal.GoalStartDate.ToString("yyyy-MM-dd HH:mm:ss"), end = goal.GoalStartDate.ToString("yyyy-MM-dd HH:mm:ss"), hours = goal.GoalHours };
+            var sql = "INSERT INTO coding (StartDayTime, EndDayTime, Activity) VALUES (@start, @end, @activityEntry)";
+            connection.Execute(sql, parameters);
+        }
+
         public static void Delete()
         {
             (int recordID, bool confirmation) = UserInput.GetRecordID("delete");
@@ -143,6 +154,25 @@ namespace CodingTracker.harris_andy
             int count = connection.ExecuteScalar<int>(sql);
             if (count == 0)
                 PopulateDatabase();
+        }
+
+        public static void InitializeCodingGoalDatabase()
+        {
+            using var connection = new SqliteConnection(AppConfig.ConnectionString);
+            var createTable = @"CREATE TABLE IF NOT EXISTS coding_goals (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                GoalStartDate TEXT,
+                GoalEndDate TEXT,
+                GoalHours TEXT
+                )";
+            connection.Execute(createTable);
+        }
+
+        public static void DropCodingGoalsTable()
+        {
+            using var connection = new SqliteConnection(AppConfig.ConnectionString);
+            var dropTable = @"DROP TABLE coding_goals";
+            connection.Execute(dropTable);
         }
     }
 }
