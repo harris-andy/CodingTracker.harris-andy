@@ -17,7 +17,7 @@ namespace CodingTracker.harris_andy
         public static void Insert(CodingSession session)
         {
             using var connection = new SqliteConnection(AppConfig.ConnectionString);
-            var parameters = new { start = session.StartDateTime, end = session.EndDateTime, activityEntry = session.Activity };
+            var parameters = new { start = session.StartDateTime.ToString("yyyy-MM-dd HH:mm:ss"), end = session.EndDateTime.ToString("yyyy-MM-dd HH:mm:ss"), activityEntry = session.Activity };
             var sql = "INSERT INTO coding (StartDayTime, EndDayTime, Activity) VALUES (@start, @end, @activityEntry)";
             connection.Execute(sql, parameters);
         }

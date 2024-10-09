@@ -5,6 +5,8 @@ This application has the same requirements as the previous project, except that 
 
 Make columns optional in: (string[] columns, List<CodingSession> sessions) = RetrieveRecord.GetRecords();
 
+Fix delete method - doesn't show records before asking for ID
+
 Challenges
 
     Add the possibility of tracking the coding time via a stopwatch so the user can track the session as it happens.

@@ -208,40 +208,48 @@ namespace CodingTracker.harris_andy
             Console.Read();
         }
 
-        public static void CreateTableFiltered(string[] columns, List<IGrouping<DateTime, CodingSession>> sessions, string dateFormat)
+        public static void CreateTableFiltered(List<SummaryReport> reports, string dateFilter)
         {
             var table = new Table();
 
-            foreach (string header in columns)
-            {
-                table.AddColumn(header).Centered();
-            }
+            table.BorderColor(Color.DarkSlateGray1);
+            table.Border(TableBorder.Rounded);
 
-            foreach (var group in sessions)
-            {
-                int totalMinutes = group.Sum(session => session.Duration);
-                float averageMinutes = totalMinutes / (float)group.Count();
-                TimeSpan totalTime = TimeSpan.FromMinutes(totalMinutes);
-                int hours = (int)totalTime.TotalHours;
-                int minutes = totalTime.Minutes;
-                string dateRow = dateFormat == "year" ? group.Key.ToString("yyyy") : group.Key.ToShortDateString();
-                var activities = group
-                        .Where(session => !string.IsNullOrEmpty(session.Activity))
-                        .Select(session => session.Activity!)
-                        .ToList();
+            table.AddColumn(new TableColumn($"[cyan1]{dateFilter}[/]").LeftAligned());
+            table.AddColumn(new TableColumn("[green1]Total Time (min)[/]").RightAligned());
+            table.AddColumn(new TableColumn("[green1]Avg Time (min)[/]").RightAligned());
+            table.AddColumn(new TableColumn("[blue1]Sessions[/]").RightAligned());
+            table.AddColumn(new TableColumn("[magenta1]Activities[/]").LeftAligned());
 
-                HashSet<string> uniqueActivites = new HashSet<string>(activities);
-                string activitiesList = string.Join(", ", uniqueActivites);
+            bool isAlternateRow = false;
+            foreach (var row in reports)
+            {
+                string formattedActivities = string.Join(", ", row.Activity.Split(','));
+                var color = isAlternateRow ? "grey" : "blue";
 
                 table.AddRow(
-                    dateRow,
-                    group.Count().ToString(),
-                    $"{hours}h {minutes}m",
-                    $"{averageMinutes:F1}",
-                    activitiesList
+                    $"[{color}]{row.Day}[/]",
+                    $"[{color}]{row.TotalTime:F1}[/]",
+                    $"[{color}]{row.AvgTime:F1}[/]",
+                    $"[{color}]{row.Sessions}[/]",
+                    $"[{color}]{formattedActivities}[/]"
                 );
+                isAlternateRow = !isAlternateRow;
             }
-            Console.Clear();
+
+
+            // foreach (SummaryReport row in reports)
+            // {
+            //     table.AddRow(
+            //         row.Day,
+            //         row.TotalTime.ToString("F1"),
+            //         row.AvgTime.ToString("F1"),
+            //         row.Sessions.ToString(),
+            //         row.Activity
+            //     );
+            // }
+
+            // Console.Clear();
             AnsiConsole.Write(table);
             Console.WriteLine("Press any key to continue...");
             Console.Read();
@@ -288,13 +296,13 @@ namespace CodingTracker.harris_andy
                     MainMenu();
                     break;
                 case 1:
-                    filterOption = "day";
+                    filterOption = "Day";
                     break;
                 case 2:
-                    filterOption = "week";
+                    filterOption = "Week";
                     break;
                 case 3:
-                    filterOption = "year";
+                    filterOption = "Year";
                     break;
                 case 4:
                     filterOption = "dateRange";

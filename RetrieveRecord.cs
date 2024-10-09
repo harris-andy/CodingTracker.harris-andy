@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Data.Sqlite;
+using Spectre.Console;
 
 namespace CodingTracker.harris_andy
 {
@@ -28,40 +29,67 @@ namespace CodingTracker.harris_andy
 
         public static void GetFilteredRecords()
         {
+            /*
+                Day
+                TotalTime
+                AvgTime
+                Sessions
+                Activity
+            */
             string filterOption = UserInput.FilteredOptionsMenu();
-            (string[] _, List<CodingSession> sessions) = GetRecords();
-            string[] columnHeaders = ["", "Sessions", "Total Time", "Avg. Min/Session", "Activities"];
-            columnHeaders[0] = filterOption == "day" ? "Day"
-                    : filterOption == "week" ? "Week Starting"
-                    : "Year";
+            var dayGroup = @"
+            WITH DayData AS (
+                SELECT 
+                    strftime('%Y-%m-%d', StartDayTime) AS Day,
+                    ROUND(SUM((julianday(EndDayTime) - julianday(StartDayTime)) * 24 * 60), 2) AS TotalTime,
+                    ROUND(AVG((julianday(EndDayTime) - julianday(StartDayTime)) * 24 * 60), 2) AS AvgTime,
+                    COUNT(*) AS Sessions,
+                    GROUP_CONCAT(DISTINCT Activity) as Activity
+                    FROM coding
+                    GROUP BY strftime('%Y-%m-%d', StartDayTime)
+                    ORDER BY Day
+                    )
+                SELECT 
+                    Day,
+                    TotalTime,
+                    AvgTime,
+                    Sessions,
+                    Activity
+                FROM DayData";
 
-            var groupedByDay = sessions
-                .GroupBy(session => session.StartDateTime.Date)
-                .OrderBy(s => s.Key)
-                .ToList();
 
-            var groupedByWeek = sessions
-                .GroupBy(session =>
-                {
-                    var startDate = session.StartDateTime.Date;
-                    var weekOfYear = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(startDate, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
-                    var year = startDate.Year;
-                    return new DateTime(year, 1, 1).AddDays((weekOfYear - 1) * 7);
-                })
-                .OrderBy(s => s.Key)
-                .ToList();
+            // var yearGroup = @"
+            //     SELECT strftime('%Y', StartDayTime) AS Year,
+            //     SUM((julianday(EndDayTime) - julianday(StartDayTime)) * 24 * 60) AS TotalTime,
+            //     AVG((julianday(EndDayTime) - julianday(StartDayTime)) * 24 * 60) AS AvgTime,
+            //     COUNT(*) AS Sessions
+            //     FROM coding
+            //     GROUP BY Year
+            //     ORDER BY Year";
 
-            var groupedByYear = sessions
-                .GroupBy(session => new DateTime(session.StartDateTime.Year, 1, 1))
-                .OrderBy(g => g.Key)
-                .ToList();
+            // var weekGroup = @"
+            //     SELECT strftime('%Y-%W', StartDayTime) AS Week,
+            //     SUM((julianday(EndDayTime) - julianday(StartDayTime)) * 24 * 60) AS TotalTime,
+            //     AVG((julianday(EndDayTime) - julianday(StartDayTime)) * 24 * 60) AS AvgTime,
+            //     COUNT(*) AS Sessions
+            //     FROM coding
+            //     GROUP BY Week
+            //     ORDER BY Week";
 
-            if (filterOption == "day")
-                UserInput.CreateTableFiltered(columnHeaders, groupedByDay, "day");
-            if (filterOption == "week")
-                UserInput.CreateTableFiltered(columnHeaders, groupedByWeek, "week");
-            if (filterOption == "year")
-                UserInput.CreateTableFiltered(columnHeaders, groupedByYear, "year");
+            string[] columnHeaders = [$"{filterOption}", "Total Time", "Sessions", "Avg Time", "Activities"];
+            // columnHeaders[0] = filterOption == "Day" ? "Day"
+            //         : filterOption == "Week" ? "Week Starting"
+            //         : "Year";
+
+            using var connection = new SqliteConnection(AppConfig.ConnectionString);
+            List<SummaryReport> reports = connection.Query<SummaryReport>(dayGroup).ToList();
+
+            // if (filterOption == "Day")
+            UserInput.CreateTableFiltered(reports, filterOption);
+            // if (filterOption == "Week")
+            //     UserInput.CreateTableFiltered(columnHeaders, groupedByWeek, "Week");
+            // if (filterOption == "Year")
+            //     UserInput.CreateTableFiltered(columnHeaders, groupedByYear, "Year");
         }
 
         public static void GetRecordSummary()

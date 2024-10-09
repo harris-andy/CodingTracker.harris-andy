@@ -24,4 +24,22 @@ namespace CodingTracker.harris_andy
             Activity = activity;
         }
     }
+
+    public class SummaryReport
+    {
+        /*
+        Day
+        TotalTime
+        AvgTime
+        Sessions
+        Activity
+        */
+        public required string Day;
+        public decimal TotalTime;
+        public decimal AvgTime;
+        public int Sessions;
+        public required string Activity;
+
+        public SummaryReport() { }
+    }
 }
