@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
@@ -27,7 +28,7 @@ namespace CodingTracker.harris_andy
             return sessions;
         }
 
-        public static void GetFilteredRecords()
+        public static void ShowFilteredRecords()
         {
             /*
                 SQL STRING FOR "WEEK STARTING DATE"
@@ -47,7 +48,7 @@ namespace CodingTracker.harris_andy
             };
 
             var reportQuery = @$"
-            WITH DayData AS (
+            WITH DateRangeData AS (
                 SELECT 
                     strftime({dateRange[$"{filter.ToLower()}"]}, StartDayTime) AS DateRange,
                     ROUND(SUM((julianday(EndDayTime) - julianday(StartDayTime)) * 24 * 60), 2) AS TotalTime,
@@ -64,25 +65,53 @@ namespace CodingTracker.harris_andy
                     AvgTime,
                     Sessions,
                     Activity
-                FROM DayData";
+                FROM DateRangeData";
 
             using var connection = new SqliteConnection(AppConfig.ConnectionString);
             List<SummaryReport> reports = connection.Query<SummaryReport>(reportQuery).ToList();
             DisplayData.CreateTableFiltered(reports, filter);
         }
 
-        public static void GetCodingGoals()
+        public static List<CodingGoal> GetCodingGoals()
         {
             string codingSQL = "SELECT * FROM coding_goals WHERE complete = 'no'";
             using var connection = new SqliteConnection(AppConfig.ConnectionString);
             List<CodingGoal> goals = connection.Query<CodingGoal>(codingSQL).ToList();
 
-            DisplayData.CreateTableCodingGoals(goals);
+            // DisplayData.CreateTableCodingGoals(goals);
 
             // DisplayData.CodingGoalsProgress(goals);
             // using var connection2 = new SqliteConnection(AppConfig.ConnectionString);
             // string updateTable = "UPDATE coding_goals SET complete = 'no' WHERE Id = 4";
             // connection2.Execute(updateTable);
+            return goals;
+        }
+
+        public static void GetCodingGoalProgressData()
+        {
+            (int recordID, bool confirmation) = UserInput.GetRecordID("get progress for", "goal");
+
+            // strftime({dateRange[$"{filter.ToLower()}"]}, StartDayTime) AS DateRange,
+            string codingSQL = $"SELECT * FROM coding_goals WHERE Id = {recordID}";
+            using var connection = new SqliteConnection(AppConfig.ConnectionString);
+            CodingGoal goal = connection.QuerySingle<CodingGoal>(codingSQL);
+            string startDate = goal.GoalStartDate.ToString("yyyy-MM-dd HH:mm:ss");
+            string endDate = goal.GoalEndDate.ToString("yyyy-MM-dd HH:mm:ss");
+
+            string progressSQL = @$"
+            SELECT
+                ROUND(SUM((julianday(EndDayTime) - julianday(StartDayTime)) * 24 * 60), 2) AS TotalTime,
+                ROUND(AVG((julianday(EndDayTime) - julianday(StartDayTime)) * 24 * 60), 2) AS AvgTime,
+                COUNT (*) AS Sessions
+            FROM coding
+            WHERE
+                 StartDayTime BETWEEN '{startDate}' AND '{endDate}'
+                 AND EndDayTime BETWEEN '{startDate}' AND '{endDate}'";
+
+            List<CodingSession> sessions = connection.Query<CodingSession>(progressSQL).ToList();
+
+            Console.Clear();
+            Console.WriteLine("FUCK YEAH");
 
         }
     }

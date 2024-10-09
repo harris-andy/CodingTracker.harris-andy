@@ -45,7 +45,7 @@ namespace CodingTracker.harris_andy
                         DisplayData.CreateTable(sessions);
                         break;
                     case 2:
-                        RetrieveRecord.GetFilteredRecords();
+                        RetrieveRecord.ShowFilteredRecords();
                         break;
                     case 3:
                         CodingSession session = GetSessionData();
@@ -71,7 +71,7 @@ namespace CodingTracker.harris_andy
                         DBInteractions.InsertCodingGoal(goal);
                         break;
                     case 10:
-                        RetrieveRecord.GetCodingGoals();
+                        RetrieveRecord.GetCodingGoalProgressData();
                         // Create Table with codingGoal
                         break;
                     default:
@@ -119,11 +119,24 @@ namespace CodingTracker.harris_andy
             return menuChoice;
         }
 
-        public static (int, bool) GetRecordID(string option)
+        public static (int, bool) GetRecordID(string option, string sessionOrGoal)
         {
-            List<CodingSession> records = RetrieveRecord.GetRecords();
-            DisplayData.CreateTable(records);
-            var validIDs = records.Select(r => r.Id).ToList();
+            List<CodingSession> records;
+            List<CodingGoal> goals;
+            var validIDs = new List<int>();
+
+            if (sessionOrGoal == "session")
+            {
+                records = RetrieveRecord.GetRecords();
+                DisplayData.CreateTable(records);
+                validIDs = records.Select(r => r.Id).ToList();
+            }
+            if (sessionOrGoal == "goal")
+            {
+                goals = RetrieveRecord.GetCodingGoals();
+                DisplayData.CreateTableCodingGoals(goals);
+                validIDs = goals.Select(r => r.Id).ToList();
+            }
 
             var recordID = AnsiConsole.Prompt(
             new TextPrompt<int>($"Enter ID of record you want to {option}:")
@@ -149,6 +162,7 @@ namespace CodingTracker.harris_andy
                 Console.WriteLine($"Skipping {option} for now. Better to think about it.");
                 Console.WriteLine("");
                 Thread.Sleep(1500);
+                MainMenu();
             }
             return (recordID, confirmation);
         }

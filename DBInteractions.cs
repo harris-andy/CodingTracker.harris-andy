@@ -32,7 +32,7 @@ namespace CodingTracker.harris_andy
 
         public static void Delete()
         {
-            (int recordID, bool confirmation) = UserInput.GetRecordID("delete");
+            (int recordID, bool confirmation) = UserInput.GetRecordID("delete", "session");
 
             if (confirmation)
             {
@@ -55,7 +55,7 @@ namespace CodingTracker.harris_andy
 
         public static void Update()
         {
-            (int recordID, bool confirmation) = UserInput.GetRecordID("update");
+            (int recordID, bool confirmation) = UserInput.GetRecordID("update", "session");
 
             if (confirmation)
             {

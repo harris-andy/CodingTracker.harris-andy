@@ -89,8 +89,6 @@ namespace CodingTracker.harris_andy
             table.AddColumn(new TableColumn("[blue1]End Date[/]").RightAligned());
             table.AddColumn(new TableColumn("[yellow1]Goal Hours[/]").RightAligned());
             table.AddColumn(new TableColumn("[red]Complete?[/]").LeftAligned());
-            // table.AddColumn(new TableColumn("[red1]End Time[/]").RightAligned());
-            // table.AddColumn(new TableColumn("[yellow1]Duration (min)[/]").LeftAligned());
 
             bool isAlternateRow = false;
             foreach (var goal in codingGoals)
@@ -109,6 +107,11 @@ namespace CodingTracker.harris_andy
             AnsiConsole.Write(table);
             Console.WriteLine("Press any key to continue...");
             Console.Read();
+        }
+
+        public static void ShowCodingGoalProgress()
+        {
+
         }
         public static void LiveSessionProgress()
         {
