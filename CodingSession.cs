@@ -34,7 +34,7 @@ namespace CodingTracker.harris_andy
         Sessions
         Activity
         */
-        public required string Day;
+        public required string DateRange;
         public decimal TotalTime;
         public decimal AvgTime;
         public int Sessions;

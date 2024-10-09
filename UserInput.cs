@@ -42,8 +42,8 @@ namespace CodingTracker.harris_andy
                         int answer = GetAllOrFiltered();
                         if (answer == 1)
                         {
-                            (string[] columns, List<CodingSession> sessions) = RetrieveRecord.GetRecords();
-                            CreateTable(columns, sessions);
+                            List<CodingSession> sessions = RetrieveRecord.GetRecords();
+                            CreateTable(sessions);
                         }
                         else if (answer == 2) RetrieveRecord.GetFilteredRecords();
                         break;
@@ -117,7 +117,7 @@ namespace CodingTracker.harris_andy
 
         public static (int, bool) GetRecordID(string option)
         {
-            (string[] columns, List<CodingSession> records) = RetrieveRecord.GetRecords();
+            List<CodingSession> records = RetrieveRecord.GetRecords();
             var validIDs = records.Select(r => r.Id).ToList();
 
             var recordID = AnsiConsole.Prompt(
@@ -181,26 +181,35 @@ namespace CodingTracker.harris_andy
             return (startDate, endDate);
         }
 
-        public static void CreateTable(string[] columns, List<CodingSession> sessions)
+        public static void CreateTable(List<CodingSession> sessions)
         {
             var table = new Table();
 
-            foreach (string header in columns)
-            {
-                table.AddColumn(header).Centered();
-            }
+            table.BorderColor(Color.DarkSlateGray1);
+            table.Border(TableBorder.Rounded);
 
+            table.AddColumn(new TableColumn("[cyan1]ID[/]").LeftAligned());
+            table.AddColumn(new TableColumn("[blue1]Activity[/]").RightAligned());
+            table.AddColumn(new TableColumn("[green1]Start Day[/]").RightAligned());
+            table.AddColumn(new TableColumn("[green1]Start Time[/]").RightAligned());
+            table.AddColumn(new TableColumn("[red1]End Day[/]").RightAligned());
+            table.AddColumn(new TableColumn("[red1]End Time[/]").RightAligned());
+            table.AddColumn(new TableColumn("[yellow1]Duration (min)[/]").LeftAligned());
+
+            bool isAlternateRow = false;
             foreach (var session in sessions)
             {
+                var color = isAlternateRow ? "grey" : "blue";
                 table.AddRow(
-                    session.Id.ToString(),
-                    session.Activity ?? "N/A",
-                    session.StartDateTime.ToShortDateString(),
-                    session.StartDateTime.ToShortTimeString(),
-                    session.EndDateTime.ToShortDateString(),
-                    session.EndDateTime.ToShortTimeString(),
-                    $"{session.Duration} min"
+                    $"[{color}]{session.Id.ToString()}[/]",
+                    $"[{color}]{session.Activity ?? "N/A"}[/]",
+                    $"[{color}]{session.StartDateTime.ToShortDateString()}[/]",
+                    $"[{color}]{session.StartDateTime.ToShortTimeString()}[/]",
+                    $"[{color}]{session.EndDateTime.ToShortDateString()}[/]",
+                    $"[{color}]{session.EndDateTime.ToShortTimeString()}[/]",
+                    $"[{color}]{session.Duration}min[/]"
                 );
+                isAlternateRow = !isAlternateRow;
             }
             Console.Clear();
             AnsiConsole.Write(table);
@@ -228,7 +237,7 @@ namespace CodingTracker.harris_andy
                 var color = isAlternateRow ? "grey" : "blue";
 
                 table.AddRow(
-                    $"[{color}]{row.Day}[/]",
+                    $"[{color}]{row.DateRange}[/]",
                     $"[{color}]{row.TotalTime:F1}[/]",
                     $"[{color}]{row.AvgTime:F1}[/]",
                     $"[{color}]{row.Sessions}[/]",
@@ -236,20 +245,6 @@ namespace CodingTracker.harris_andy
                 );
                 isAlternateRow = !isAlternateRow;
             }
-
-
-            // foreach (SummaryReport row in reports)
-            // {
-            //     table.AddRow(
-            //         row.Day,
-            //         row.TotalTime.ToString("F1"),
-            //         row.AvgTime.ToString("F1"),
-            //         row.Sessions.ToString(),
-            //         row.Activity
-            //     );
-            // }
-
-            // Console.Clear();
             AnsiConsole.Write(table);
             Console.WriteLine("Press any key to continue...");
             Console.Read();
@@ -274,17 +269,12 @@ namespace CodingTracker.harris_andy
         {
             Console.WriteLine(
                     "--------------------------------------------------\n" +
-                    // "\n\t\tMAIN MENU\n\n" +
                     "\tHow would you like your coding session summary?\n\n" +
                     "\tType 0 to Back to Main Menu\n" +
                     "\tType 1 to View Sessions by Day\n" +
                     "\tType 2 to View Sessions by Week\n" +
                     "\tType 3 to View Sessions by Year\n" +
                     "\tType 4 to Select Specific Date Range\n" +
-                    // "\tType 5 to View A Record Summary\n" +
-                    // "\tType 6 to Delete All Records :(\n" +
-                    // "\tType 7 to Add 100 Rows of Fake Data\n" +
-                    // "\tType 8 to Start a Timed Coding Session. Neat!\n" +
                     "--------------------------------------------------\n");
 
             int inputNumber = GetMenuChoice(0, 4);
