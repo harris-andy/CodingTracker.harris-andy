@@ -24,12 +24,9 @@ namespace CodingTracker.harris_andy
 
         public static void InsertCodingGoal(CodingGoal goal)
         {
-            // GoalTimeForm = timeForm;
-            // GoalHours = hours;
-            // GoalStartDate = startDate;
             using var connection = new SqliteConnection(AppConfig.ConnectionString);
-            var parameters = new { start = goal.GoalStartDate.ToString("yyyy-MM-dd HH:mm:ss"), end = goal.GoalStartDate.ToString("yyyy-MM-dd HH:mm:ss"), hours = goal.GoalHours };
-            var sql = "INSERT INTO coding (StartDayTime, EndDayTime, Activity) VALUES (@start, @end, @activityEntry)";
+            var parameters = new { start = goal.GoalStartDate.ToString("yyyy-MM-dd HH:mm:ss"), end = goal.GoalEndDate.ToString("yyyy-MM-dd HH:mm:ss"), hours = goal.GoalHours };
+            var sql = "INSERT INTO coding_goals (GoalStartDate, GoalEndDate, GoalHours) VALUES (@start, @end, @hours)";
             connection.Execute(sql, parameters);
         }
 

@@ -77,6 +77,39 @@ namespace CodingTracker.harris_andy
             Console.Read();
         }
 
+        public static void CreateTableCodingGoals(List<CodingGoal> codingGoals)
+        {
+            var table = new Table();
+
+            table.BorderColor(Color.DarkSlateGray1);
+            table.Border(TableBorder.Rounded);
+
+            table.AddColumn(new TableColumn("[cyan1]ID[/]").LeftAligned());
+            table.AddColumn(new TableColumn("[green1]Start Date[/]").RightAligned());
+            table.AddColumn(new TableColumn("[blue1]End Date[/]").RightAligned());
+            table.AddColumn(new TableColumn("[yellow1]Goal Hours[/]").RightAligned());
+            table.AddColumn(new TableColumn("[red]Complete?[/]").LeftAligned());
+            // table.AddColumn(new TableColumn("[red1]End Time[/]").RightAligned());
+            // table.AddColumn(new TableColumn("[yellow1]Duration (min)[/]").LeftAligned());
+
+            bool isAlternateRow = false;
+            foreach (var goal in codingGoals)
+            {
+                var color = isAlternateRow ? "grey" : "blue";
+                table.AddRow(
+                    $"[{color}]{goal.Id.ToString()}[/]",
+                    $"[{color}]{goal.GoalStartDate.ToShortDateString()}[/]",
+                    $"[{color}]{goal.GoalEndDate.ToShortDateString()}[/]",
+                    $"[{color}]{goal.GoalHours.ToString()}[/]",
+                    $"[{color}]{goal.Complete.ToString()}[/]"
+                );
+                isAlternateRow = !isAlternateRow;
+            }
+            Console.Clear();
+            AnsiConsole.Write(table);
+            Console.WriteLine("Press any key to continue...");
+            Console.Read();
+        }
         public static void LiveSessionProgress()
         {
             AnsiConsole.Progress()

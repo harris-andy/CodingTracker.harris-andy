@@ -71,8 +71,18 @@ namespace CodingTracker.harris_andy
             DisplayData.CreateTableFiltered(reports, filter);
         }
 
-        public static void GetRecordSummary()
+        public static void GetCodingGoals()
         {
+            string codingSQL = "SELECT * FROM coding_goals WHERE complete = 'no'";
+            using var connection = new SqliteConnection(AppConfig.ConnectionString);
+            List<CodingGoal> goals = connection.Query<CodingGoal>(codingSQL).ToList();
+
+            DisplayData.CreateTableCodingGoals(goals);
+
+            // DisplayData.CodingGoalsProgress(goals);
+            // using var connection2 = new SqliteConnection(AppConfig.ConnectionString);
+            // string updateTable = "UPDATE coding_goals SET complete = 'no' WHERE Id = 4";
+            // connection2.Execute(updateTable);
 
         }
     }

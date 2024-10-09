@@ -28,9 +28,10 @@ namespace CodingTracker.harris_andy
                     "\tType 7 to Add 100 Rows of Fake Data\n" +
                     "\tType 8 to Start a Timed Coding Session. Neat!\n" +
                     "\tType 9 to Set a Coding Goal\n" +
+                    "\tType 10 to Get Coding Goal Progress\n" +
                     "--------------------------------------------------\n");
 
-                int inputNumber = GetMenuChoice(0, 8);
+                int inputNumber = GetMenuChoice(0, 10);
 
                 switch (inputNumber)
                 {
@@ -66,7 +67,12 @@ namespace CodingTracker.harris_andy
                         DisplayData.LiveSessionProgress();
                         break;
                     case 9:
-                        GetCodingGoal();
+                        CodingGoal goal = SetCodingGoal();
+                        DBInteractions.InsertCodingGoal(goal);
+                        break;
+                    case 10:
+                        RetrieveRecord.GetCodingGoals();
+                        // Create Table with codingGoal
                         break;
                     default:
                         Console.Clear();
@@ -234,7 +240,7 @@ namespace CodingTracker.harris_andy
             return filterOption;
         }
 
-        public static CodingGoal GetCodingGoal()
+        public static CodingGoal SetCodingGoal()
         {
             // int goalTimeForm = AnsiConsole.Prompt(
             // new TextPrompt<int>("Set Coding Goal Date Range:\n1. Day\n2. Week\n3. Year\nEnter choice:")
@@ -251,7 +257,9 @@ namespace CodingTracker.harris_andy
             //     .AddChoices(["Day", "Week", "Year"]));
 
             DateTime startDate = GetDate("coding goal start");
-            DateTime endDate = GetDate("coding goal end");
+            DateTime userInputDate = GetDate("coding goal end");
+            DateTime endDate = userInputDate.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+            string complete = "no";
 
             float goalHours = AnsiConsole.Prompt(
             new TextPrompt<float>("What's your coding goal?\nEnter hours:")
@@ -263,7 +271,7 @@ namespace CodingTracker.harris_andy
                         return ValidationResult.Error("[red]Invalid number[/]");
                 }));
 
-            CodingGoal goal = new CodingGoal(startDate, endDate, goalHours);
+            CodingGoal goal = new CodingGoal(startDate, endDate, goalHours, complete);
 
             return goal;
         }

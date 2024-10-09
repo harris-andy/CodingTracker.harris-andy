@@ -5,6 +5,10 @@ Requirements
 
 - Fix filtered week output to use Week Starting
 
+- Correct GetCodingGoal() because now it returns everything
+
+- Clean up Create Tables functions - there's a lot of repetition
+
 Challenges
 
     Add the possibility of tracking the coding time via a stopwatch so the user can track the session as it happens.
