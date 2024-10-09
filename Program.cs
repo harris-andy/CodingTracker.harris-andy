@@ -3,8 +3,6 @@ Requirements
 
 - This application has the same requirements as the previous project, except that now you'll be logging your daily coding time.
 
-- Make columns optional in: (string[] columns, List<CodingSession> sessions) = RetrieveRecord.GetRecords();
-
 - Fix delete method - doesn't show records before asking for ID
 
 - Fix filtered week output to use Week Starting

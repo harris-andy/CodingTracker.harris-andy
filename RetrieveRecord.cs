@@ -30,7 +30,7 @@ namespace CodingTracker.harris_andy
         public static void GetFilteredRecords()
         {
             /*
-                sql string to get week starting:
+                SQL STRING FOR "WEEK STARTING DATE"
 
                 strftime('%Y-%m-%d', 
                     date(strftime('%Y-01-01', StartDayTime), 
@@ -68,7 +68,7 @@ namespace CodingTracker.harris_andy
 
             using var connection = new SqliteConnection(AppConfig.ConnectionString);
             List<SummaryReport> reports = connection.Query<SummaryReport>(reportQuery).ToList();
-            UserInput.CreateTableFiltered(reports, filter);
+            DisplayData.CreateTableFiltered(reports, filter);
         }
 
         public static void GetRecordSummary()
