@@ -225,12 +225,20 @@ namespace CodingTracker.harris_andy
                 int hours = (int)totalTime.TotalHours;
                 int minutes = totalTime.Minutes;
                 string dateRow = dateFormat == "year" ? group.Key.ToString("yyyy") : group.Key.ToShortDateString();
+                var activities = group
+                        .Where(session => !string.IsNullOrEmpty(session.Activity))
+                        .Select(session => session.Activity!)
+                        .ToList();
+
+                HashSet<string> uniqueActivites = new HashSet<string>(activities);
+                string activitiesList = string.Join(", ", uniqueActivites);
 
                 table.AddRow(
                     dateRow,
                     group.Count().ToString(),
                     $"{hours}h {minutes}m",
-                    $"{averageMinutes:F1}"
+                    $"{averageMinutes:F1}",
+                    activitiesList
                 );
             }
             Console.Clear();
@@ -243,13 +251,13 @@ namespace CodingTracker.harris_andy
         {
             int answer = AnsiConsole.Prompt(
             new TextPrompt<int>("1. All Records\n2. Filtered Records\nEnter choice:")
-            .Validate((n) =>
-            {
-                if (n == 1 || n == 2)
-                    return ValidationResult.Success();
-                else
-                    return ValidationResult.Error("[red]Invalid number[/]");
-            }));
+                .Validate((n) =>
+                {
+                    if (n == 1 || n == 2)
+                        return ValidationResult.Success();
+                    else
+                        return ValidationResult.Error("[red]Invalid number[/]");
+                }));
             Console.Clear();
             return answer;
         }

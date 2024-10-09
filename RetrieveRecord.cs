@@ -30,7 +30,7 @@ namespace CodingTracker.harris_andy
         {
             string filterOption = UserInput.FilteredOptionsMenu();
             (string[] _, List<CodingSession> sessions) = GetRecords();
-            string[] columnHeaders = ["", "Sessions", "Total Time", "Avg. Min/Session"];
+            string[] columnHeaders = ["", "Sessions", "Total Time", "Avg. Min/Session", "Activities"];
             columnHeaders[0] = filterOption == "day" ? "Day"
                     : filterOption == "week" ? "Week Starting"
                     : "Year";
