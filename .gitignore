@@ -1,0 +1,5 @@
+# Ignore the database file
+CodingTracker.db
+
+# Ignore Visual Studio Code settings
+.vscode/
