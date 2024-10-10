@@ -13,7 +13,7 @@ This is my submission for the cSharpAcademy Habit Logger project found here: [Co
 - Follow the instructions and away you go
 - i.e. Select from the menu to perform operations such as: viewing all records, inserting, updating and deleting records.
 
-![Main menu screen](/images/mainmenu.png)
+![main menu](/images/gamemenu.png)
 
 ## Features
 - Record a coding session including start date, end date and activity
@@ -24,7 +24,7 @@ This is my submission for the cSharpAcademy Habit Logger project found here: [Co
 
 - Get summary records by day, week or year
 
-![annual summary of records](/images/recordsummary.png)
+![annual summary of records](/images/summary.png)
 
 - Set a coding goal with start and end dates and target hours
 - See progress toward your goal - updated with every new coding session entered
