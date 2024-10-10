@@ -3,7 +3,6 @@
 
 This is my submission for the cSharpAcademy Habit Logger project found here: [Coding Tracker Project](https://thecsharpacademy.com/project/13/coding-tracker)
 
-<img width="250" alt="mainmenu" src="https://github.com/user-attachments/assets/3efb8534-29d0-4bb2-89c9-977fd5618b93">
 
 ## Project Description
 - It's a small console CRUD app in which the user can track coding sessions which are stored in a local SQLite database.
