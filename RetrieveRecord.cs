@@ -16,15 +16,6 @@ namespace CodingTracker.harris_andy
 
         public static void ShowFilteredRecords()
         {
-            /*
-                SQL STRING FOR "WEEK STARTING DATE"
-
-                strftime('%Y-%m-%d', 
-                    date(strftime('%Y-01-01', StartDayTime), 
-                        'weekday 0', 
-                        '+' || (strftime('%W', StartDayTime)) || ' weeks')
-                ) as WeekStart
-            */
             string filter = UserInput.FilteredOptionsMenu();
             Dictionary<string, string> dateType = new Dictionary<string, string>
             {

@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.VisualBasic;
-using System.Windows.Input;
 using Spectre.Console;
 
 namespace CodingTracker.harris_andy
@@ -60,11 +54,24 @@ namespace CodingTracker.harris_andy
 
             foreach (var row in reports)
             {
+                string dateRange = row.DateRange;
+                if (dateFilter == "Week")
+                {
+                    // Converting row.DateRange into an actual date was weird and I didn't understand it so AI helped. My bad.
+                    var parts = dateRange.Split('-');
+                    int year = int.Parse(parts[0]);
+                    int weekNumber = int.Parse(parts[1]);
+
+                    DateTime jan1 = new DateTime(year, 1, 1);
+                    DateTime startOfWeek = jan1.AddDays((weekNumber - 1) * 7 - (int)jan1.DayOfWeek + (int)DayOfWeek.Monday);
+                    dateRange = startOfWeek.ToString("yyyy-MM-dd");
+                }
+
                 string formattedActivities = string.Join(", ", row.Activity.Split(','));
                 var color = isAlternateRow ? "grey" : "blue";
 
                 table.AddRow(
-                    $"[{color}]{row.DateRange}[/]",
+                    $"[{color}]{dateRange}[/]",
                     $"[{color}]{row.TotalTime:F1}[/]",
                     $"[{color}]{row.AvgTime:F1}[/]",
                     $"[{color}]{row.Sessions}[/]",
