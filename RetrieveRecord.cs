@@ -40,7 +40,7 @@ namespace CodingTracker.harris_andy
                 ) as WeekStart
             */
             string filter = UserInput.FilteredOptionsMenu();
-            Dictionary<string, string> dateRange = new Dictionary<string, string>
+            Dictionary<string, string> dateType = new Dictionary<string, string>
             {
                 {"day", "'%Y-%m-%d'"},
                 {"week", "'%Y-%W'"},
@@ -50,14 +50,14 @@ namespace CodingTracker.harris_andy
             var reportQuery = @$"
             WITH DateRangeData AS (
                 SELECT 
-                    strftime({dateRange[$"{filter.ToLower()}"]}, StartDayTime) AS DateRange,
+                    strftime({dateType[$"{filter.ToLower()}"]}, StartDayTime) AS DateRange,
                     ROUND(SUM((julianday(EndDayTime) - julianday(StartDayTime)) * 24 * 60), 2) AS TotalTime,
                     ROUND(AVG((julianday(EndDayTime) - julianday(StartDayTime)) * 24 * 60), 2) AS AvgTime,
                     COUNT(*) AS Sessions,
                     GROUP_CONCAT(DISTINCT Activity) as Activity
-                    FROM coding
-                    GROUP BY strftime({dateRange[$"{filter.ToLower()}"]}, StartDayTime)
-                    ORDER BY DateRange
+                FROM coding
+                GROUP BY strftime({dateType[$"{filter.ToLower()}"]}, StartDayTime)
+                ORDER BY DateRange
                     )
                 SELECT 
                     DateRange,
@@ -89,30 +89,34 @@ namespace CodingTracker.harris_andy
 
         public static void GetCodingGoalProgressData()
         {
-            (int recordID, bool confirmation) = UserInput.GetRecordID("get progress for", "goal");
-
-            // strftime({dateRange[$"{filter.ToLower()}"]}, StartDayTime) AS DateRange,
+            (int recordID, bool _) = UserInput.GetRecordID("get progress for", "goal");
             string codingSQL = $"SELECT * FROM coding_goals WHERE Id = {recordID}";
             using var connection = new SqliteConnection(AppConfig.ConnectionString);
             CodingGoal goal = connection.QuerySingle<CodingGoal>(codingSQL);
+
             string startDate = goal.GoalStartDate.ToString("yyyy-MM-dd HH:mm:ss");
             string endDate = goal.GoalEndDate.ToString("yyyy-MM-dd HH:mm:ss");
 
             string progressSQL = @$"
-            SELECT
-                ROUND(SUM((julianday(EndDayTime) - julianday(StartDayTime)) * 24 * 60), 2) AS TotalTime,
-                ROUND(AVG((julianday(EndDayTime) - julianday(StartDayTime)) * 24 * 60), 2) AS AvgTime,
-                COUNT (*) AS Sessions
-            FROM coding
-            WHERE
-                 StartDayTime BETWEEN '{startDate}' AND '{endDate}'
-                 AND EndDayTime BETWEEN '{startDate}' AND '{endDate}'";
+                SELECT
+                    '{startDate:yyyy-MM-dd} to {endDate:yyyy-MM-dd}' AS DateRange,
+                    ROUND(SUM((julianday(EndDayTime) - julianday(StartDayTime)) * 24 * 60), 2) AS TotalTime,
+                    ROUND(AVG((julianday(EndDayTime) - julianday(StartDayTime)) * 24 * 60), 2) AS AvgTime,
+                    COUNT (*) AS Sessions,
+                    GROUP_CONCAT(DISTINCT Activity) as Activity
+                FROM coding
+                WHERE
+                    StartDayTime BETWEEN '{startDate}' AND '{endDate}'
+                    AND EndDayTime BETWEEN '{startDate}' AND '{endDate}'";
 
-            List<CodingSession> sessions = connection.Query<CodingSession>(progressSQL).ToList();
 
+            SummaryReport sessionData = connection.QuerySingle<SummaryReport>(progressSQL);
+
+            DisplayData.ShowCodingGoalProgress(goal, sessionData);
+
+            Console.WriteLine("Press any key to continue...");
+            Console.Read();
             Console.Clear();
-            Console.WriteLine("FUCK YEAH");
-
         }
     }
 }

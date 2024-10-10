@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.VisualBasic;
 using Spectre.Console;
 
 namespace CodingTracker.harris_andy
@@ -42,6 +43,7 @@ namespace CodingTracker.harris_andy
             AnsiConsole.Write(table);
             Console.WriteLine("Press any key to continue...");
             Console.Read();
+            Console.Clear();
         }
 
         public static void CreateTableFiltered(List<SummaryReport> reports, string dateFilter)
@@ -75,6 +77,7 @@ namespace CodingTracker.harris_andy
             AnsiConsole.Write(table);
             Console.WriteLine("Press any key to continue...");
             Console.Read();
+            Console.Clear();
         }
 
         public static void CreateTableCodingGoals(List<CodingGoal> codingGoals)
@@ -109,9 +112,51 @@ namespace CodingTracker.harris_andy
             Console.Read();
         }
 
-        public static void ShowCodingGoalProgress()
+        public static void ShowCodingGoalProgress(CodingGoal goal, SummaryReport sessionData)
         {
+            Console.Clear();
+            var table = new Table();
+            string complete = (sessionData.TotalTime / 60) > (decimal)goal.GoalHours ? "Yeah!" : "Nope";
 
+            AnsiConsole.Write(new Rule("[yellow bold]Coding Goal Summary[/]")
+            {
+                Style = Style.Parse("yellow"),
+                Justification = Justify.Center,
+                Border = BoxBorder.Heavy
+            });
+            AnsiConsole.WriteLine();
+
+            table.BorderColor(Color.DarkSlateGray1);
+            table.Border(TableBorder.Rounded);
+
+            table.AddColumn(new TableColumn("[cyan1]Start Date[/]").LeftAligned());
+            table.AddColumn(new TableColumn("[green1]End Date[/]").RightAligned());
+            table.AddColumn(new TableColumn("[blue1]Target Hours[/]").RightAligned());
+            table.AddColumn(new TableColumn("[yellow1]Actual Hours[/]").RightAligned());
+            table.AddColumn(new TableColumn("[red]Complete?[/]").LeftAligned());
+
+            table.AddRow(
+                $"{goal.GoalStartDate.ToShortDateString()}",
+                $"{goal.GoalEndDate.ToShortDateString()}",
+                $"{goal.GoalHours.ToString()}",
+                $"{(sessionData.TotalTime / 60).ToString()}",
+                $"{complete}"
+            );
+            AnsiConsole.Write(table);
+
+            double codingTime = Convert.ToDouble(sessionData.TotalTime / 60);
+            double goalTime = Convert.ToDouble(goal.GoalHours);
+
+            Console.WriteLine("\n");
+
+            AnsiConsole.Write(new BarChart()
+                .Width(75)
+                .Label("[green bold underline]Coding Times[/]")
+                .CenterLabel()
+                .AddItem("Coding Time", codingTime, Color.Red)
+                .AddItem("Goal Time", goalTime, Color.Blue));
+
+            Console.WriteLine("\n\n");
         }
         public static void LiveSessionProgress()
         {

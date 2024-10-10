@@ -134,8 +134,8 @@ namespace CodingTracker.harris_andy
             if (sessionOrGoal == "goal")
             {
                 goals = RetrieveRecord.GetCodingGoals();
-                DisplayData.CreateTableCodingGoals(goals);
                 validIDs = goals.Select(r => r.Id).ToList();
+                DisplayData.CreateTableCodingGoals(goals);
             }
 
             var recordID = AnsiConsole.Prompt(
