@@ -1,14 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics.Eventing.Reader;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Data.Sqlite;
-using Spectre.Console;
 
 namespace CodingTracker.harris_andy
 {
@@ -19,11 +10,6 @@ namespace CodingTracker.harris_andy
             var sql = "SELECT Id, StartDayTime, EndDayTime, Activity FROM coding";
             using var connection = new SqliteConnection(AppConfig.ConnectionString);
             List<CodingSession> sessions = connection.Query<CodingSession>(sql).ToList();
-            // string[] columns = ["ID", "Activity", "Start Day", "Start Time", "End Day", "End Time", "Duration"];
-
-            // UserInput.CreateTable(columns, sessions);
-            // Console.WriteLine("Press any key to continue...");
-            // Console.Read();
 
             return sessions;
         }

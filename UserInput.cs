@@ -60,7 +60,7 @@ namespace CodingTracker.harris_andy
                         DBInteractions.PopulateDatabase();
                         break;
                     case 8:
-                        DisplayData.LiveSessionProgress();
+                        DisplayData.LiveCodingSession();
                         break;
                     case 9:
                         CodingGoal goal = SetCodingGoal();
@@ -77,25 +77,54 @@ namespace CodingTracker.harris_andy
             }
         }
 
-        public static CodingSession GetSessionData()
+        public static string FilteredOptionsMenu()
         {
-            Console.Clear();
-            DateTime date = GetDate("session");
-            Console.Clear();
-            TimeSpan startTime = GetTime("start");
-            Console.Clear();
-            TimeSpan endTime = GetTime("end");
-            Console.Clear();
-            string activity = GetActivity();
-            (DateTime startDateTime, DateTime endDateTime) = ParseDateTimes(date, startTime, endTime);
+            Console.WriteLine(
+                    "--------------------------------------------------\n" +
+                    "\tHow would you like your coding session summary?\n\n" +
+                    "\tType 0 to Back to Main Menu\n" +
+                    "\tType 1 to View Sessions by Day\n" +
+                    "\tType 2 to View Sessions by Week\n" +
+                    "\tType 3 to View Sessions by Year\n" +
+                    "--------------------------------------------------\n");
 
-            CodingSession session = new CodingSession
+            int inputNumber = GetMenuChoice(0, 4);
+            string filterOption = "";
+
+            switch (inputNumber)
             {
-                StartDayTime = startDateTime.ToString("yyyy-MM-dd HH:mm:ss"),
-                EndDayTime = endDateTime.ToString("yyyy-MM-dd HH:mm:ss"),
-                Activity = activity
-            };
-            return session;
+                case 0:
+                    MainMenu();
+                    break;
+                case 1:
+                    filterOption = "Day";
+                    break;
+                case 2:
+                    filterOption = "Week";
+                    break;
+                case 3:
+                    filterOption = "Year";
+                    break;
+                default:
+                    MainMenu();
+                    break;
+            }
+            return filterOption;
+        }
+
+        public static string GetActivity()
+        {
+            string activity = AnsiConsole.Prompt(
+                new TextPrompt<string>("Enter your coding activity:")
+            );
+            return activity;
+        }
+
+        public static DateTime GetDate(string option)
+        {
+            DateTime date = AnsiConsole.Prompt(
+                new TextPrompt<DateTime>($"Enter {option} date:"));
+            return date;
         }
 
         public static int GetMenuChoice(int start, int end)
@@ -117,7 +146,7 @@ namespace CodingTracker.harris_andy
         {
             List<CodingSession> records;
             List<CodingGoal> goals;
-            var validIDs = new List<int>();
+            List<int> validIDs = new List<int>();
 
             if (sessionOrGoal == "session")
             {
@@ -161,11 +190,25 @@ namespace CodingTracker.harris_andy
             return (recordID, confirmation);
         }
 
-        public static DateTime GetDate(string option)
+        public static CodingSession GetSessionData()
         {
-            DateTime date = AnsiConsole.Prompt(
-                new TextPrompt<DateTime>($"Enter {option} date:"));
-            return date;
+            Console.Clear();
+            DateTime date = GetDate("session");
+            Console.Clear();
+            TimeSpan startTime = GetTime("start");
+            Console.Clear();
+            TimeSpan endTime = GetTime("end");
+            Console.Clear();
+            string activity = GetActivity();
+            (DateTime startDateTime, DateTime endDateTime) = ParseDateTimes(date, startTime, endTime);
+
+            CodingSession session = new CodingSession
+            {
+                StartDayTime = startDateTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                EndDayTime = endDateTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                Activity = activity
+            };
+            return session;
         }
 
         public static TimeSpan GetTime(string sessionTime)
@@ -173,14 +216,6 @@ namespace CodingTracker.harris_andy
             TimeSpan time = AnsiConsole.Prompt(
                 new TextPrompt<TimeSpan>($"Enter {sessionTime} time:"));
             return time;
-        }
-
-        public static string GetActivity()
-        {
-            string activity = AnsiConsole.Prompt(
-                new TextPrompt<string>("Enter your coding activity:")
-            );
-            return activity;
         }
 
         public static (DateTime, DateTime) ParseDateTimes(DateTime date, TimeSpan start, TimeSpan end)
@@ -192,41 +227,6 @@ namespace CodingTracker.harris_andy
                 endDate = endDate.AddDays(1);
             }
             return (startDate, endDate);
-        }
-
-        public static string FilteredOptionsMenu()
-        {
-            Console.WriteLine(
-                    "--------------------------------------------------\n" +
-                    "\tHow would you like your coding session summary?\n\n" +
-                    "\tType 0 to Back to Main Menu\n" +
-                    "\tType 1 to View Sessions by Day\n" +
-                    "\tType 2 to View Sessions by Week\n" +
-                    "\tType 3 to View Sessions by Year\n" +
-                    "--------------------------------------------------\n");
-
-            int inputNumber = GetMenuChoice(0, 4);
-            string filterOption = "";
-
-            switch (inputNumber)
-            {
-                case 0:
-                    MainMenu();
-                    break;
-                case 1:
-                    filterOption = "Day";
-                    break;
-                case 2:
-                    filterOption = "Week";
-                    break;
-                case 3:
-                    filterOption = "Year";
-                    break;
-                default:
-                    MainMenu();
-                    break;
-            }
-            return filterOption;
         }
 
         public static CodingGoal SetCodingGoal()

@@ -43,7 +43,6 @@ namespace CodingTracker.harris_andy
             AnsiConsole.Write(table);
             Console.WriteLine("Press any key to continue...");
             Console.Read();
-            Console.Clear();
         }
 
         public static void CreateTableFiltered(List<SummaryReport> reports, string dateFilter)
@@ -110,6 +109,39 @@ namespace CodingTracker.harris_andy
             Console.Read();
         }
 
+        public static void LiveCodingSession()
+        {
+            Console.Clear();
+            string activity = UserInput.GetActivity();
+            DateTime startTime = DateTime.Now;
+            string startDayTime = startTime.ToString("yyyy-MM-dd HH:mm:ss");
+            string endDayTime = "1001-01-01 00:00:01";
+
+            AnsiConsole.Status()
+                .Start("Coding...", ctx =>
+                {
+                    while (true)
+                    {
+                        var elapsedTime = DateTime.Now - startTime;
+                        ctx.Status($"Coding...  {elapsedTime.ToString(@"hh\:mm\:ss")}");
+                        ctx.Spinner(Spinner.Known.Pong);
+                        ctx.SpinnerStyle(Style.Parse("yellow"));
+
+                        if (Console.KeyAvailable)
+                        {
+                            ConsoleKeyInfo button = Console.ReadKey(true);
+                            if (button.Key == ConsoleKey.Spacebar)
+                            {
+                                endDayTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                                break;
+                            }
+                        }
+                    }
+                });
+            CodingSession stopwatch = new CodingSession(startDayTime, endDayTime, activity);
+            DBInteractions.Insert(stopwatch);
+        }
+
         public static void ShowCodingGoalProgress(CodingGoal goal, SummaryReport sessionData)
         {
             Console.Clear();
@@ -159,39 +191,6 @@ namespace CodingTracker.harris_andy
                 .AddItem("Coding Time", codingTime, Color.Red)
                 .AddItem("Goal:", goalTime, Color.Blue));
             Console.WriteLine("\n\n");
-        }
-
-        public static void LiveSessionProgress()
-        {
-            Console.Clear();
-            string activity = UserInput.GetActivity();
-            DateTime startTime = DateTime.Now;
-            string startDayTime = startTime.ToString("yyyy-MM-dd HH:mm:ss");
-            string endDayTime = "1001-01-01 00:00:01";
-
-            AnsiConsole.Status()
-                .Start("Coding...", ctx =>
-                {
-                    while (true)
-                    {
-                        var elapsedTime = DateTime.Now - startTime;
-                        ctx.Status($"Coding...  {elapsedTime.ToString(@"hh\:mm\:ss")}");
-                        ctx.Spinner(Spinner.Known.Pong);
-                        ctx.SpinnerStyle(Style.Parse("yellow"));
-
-                        if (Console.KeyAvailable)
-                        {
-                            ConsoleKeyInfo button = Console.ReadKey(true);
-                            if (button.Key == ConsoleKey.Spacebar)
-                            {
-                                endDayTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                                break;
-                            }
-                        }
-                    }
-                });
-            CodingSession stopwatch = new CodingSession(startDayTime, endDayTime, activity);
-            DBInteractions.Insert(stopwatch);
         }
     }
 }

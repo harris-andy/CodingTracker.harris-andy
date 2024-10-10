@@ -6,12 +6,6 @@ Requirements
 - Clean up Create Tables functions - there's a lot of repetition
 
 */
-
-using System.Configuration;
-using System.Collections.Specialized;
-using System.Data;
-using System.Globalization;
-using Microsoft.Data.Sqlite;
 using CodingTracker.harris_andy;
 
 

@@ -7,6 +7,36 @@ namespace CodingTracker.harris_andy
 {
     public class DBInteractions
     {
+        public static void InitializeCodingGoalDatabase()
+        {
+            using var connection = new SqliteConnection(AppConfig.ConnectionString);
+            var createTable = @"CREATE TABLE IF NOT EXISTS coding_goals (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                GoalStartDate TEXT,
+                GoalEndDate TEXT,
+                GoalHours TEXT,
+                Complete TEXT
+                )";
+            connection.Execute(createTable);
+        }
+
+        public static void InitializeDatabase()
+        {
+            using var connection = new SqliteConnection(AppConfig.ConnectionString);
+            var createTable = @"CREATE TABLE IF NOT EXISTS coding (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                StartDayTime TEXT,
+                EndDayTime TEXT,
+                Activity TEXT
+                )";
+            connection.Execute(createTable);
+
+            string sql = "SELECT COUNT(*) FROM coding";
+            int count = connection.ExecuteScalar<int>(sql);
+            if (count == 0)
+                PopulateDatabase();
+        }
+
         public static void Insert(CodingSession session)
         {
             using var connection = new SqliteConnection(AppConfig.ConnectionString);
@@ -46,38 +76,6 @@ namespace CodingTracker.harris_andy
             Console.Clear();
         }
 
-        public static void Update()
-        {
-            (int recordID, bool confirmation) = UserInput.GetRecordID("update", "session");
-
-            if (confirmation)
-            {
-                // (DateTime startDateTime, DateTime endDateTime, string activity) = UserInput.GetSessionData();
-                CodingSession session = UserInput.GetSessionData();
-                using var connection = new SqliteConnection(AppConfig.ConnectionString);
-                var parameters = new { id = recordID, start = session.StartDateTime, end = session.EndDateTime, activityEntry = session.Activity };
-                var sql = "UPDATE coding SET StartDayTime = @start, EndDayTime = @end, Activity = @activityEntry WHERE Id = @id";
-                connection.Execute(sql, parameters);
-
-                Console.WriteLine("");
-                Console.WriteLine($"Record {recordID} updated! We're having so much fun.");
-                Console.WriteLine("");
-                Thread.Sleep(2000);
-            }
-            else
-            {
-                UserInput.MainMenu();
-            }
-            Console.Clear();
-        }
-
-        public static void UpdateCodingGoalComplete(int goalId)
-        {
-            string sql = $"UPDATE coding_goals SET Complete = 'yes' WHERE Id = {goalId}";
-            using var connection = new SqliteConnection(AppConfig.ConnectionString);
-            connection.Execute(sql);
-        }
-
         public static void DeleteTableContents()
         {
             Console.Clear();
@@ -113,6 +111,13 @@ namespace CodingTracker.harris_andy
             Console.Clear();
         }
 
+        public static void DropCodingGoalsTable()
+        {
+            using var connection = new SqliteConnection(AppConfig.ConnectionString);
+            var dropTable = @"DROP TABLE coding_goals";
+            connection.Execute(dropTable);
+        }
+
         public static void PopulateDatabase()
         {
             Random random = new Random();
@@ -136,41 +141,35 @@ namespace CodingTracker.harris_andy
             Console.Clear();
         }
 
-        public static void InitializeDatabase()
+        public static void Update()
         {
-            using var connection = new SqliteConnection(AppConfig.ConnectionString);
-            var createTable = @"CREATE TABLE IF NOT EXISTS coding (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                StartDayTime TEXT,
-                EndDayTime TEXT,
-                Activity TEXT
-                )";
-            connection.Execute(createTable);
+            (int recordID, bool confirmation) = UserInput.GetRecordID("update", "session");
 
-            string sql = "SELECT COUNT(*) FROM coding";
-            int count = connection.ExecuteScalar<int>(sql);
-            if (count == 0)
-                PopulateDatabase();
+            if (confirmation)
+            {
+                CodingSession session = UserInput.GetSessionData();
+                using var connection = new SqliteConnection(AppConfig.ConnectionString);
+                var parameters = new { id = recordID, start = session.StartDateTime, end = session.EndDateTime, activityEntry = session.Activity };
+                var sql = "UPDATE coding SET StartDayTime = @start, EndDayTime = @end, Activity = @activityEntry WHERE Id = @id";
+                connection.Execute(sql, parameters);
+
+                Console.WriteLine("");
+                Console.WriteLine($"Record {recordID} updated! We're having so much fun.");
+                Console.WriteLine("");
+                Thread.Sleep(2000);
+            }
+            else
+            {
+                UserInput.MainMenu();
+            }
+            Console.Clear();
         }
 
-        public static void InitializeCodingGoalDatabase()
+        public static void UpdateCodingGoalComplete(int goalId)
         {
+            string sql = $"UPDATE coding_goals SET Complete = 'yes' WHERE Id = {goalId}";
             using var connection = new SqliteConnection(AppConfig.ConnectionString);
-            var createTable = @"CREATE TABLE IF NOT EXISTS coding_goals (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                GoalStartDate TEXT,
-                GoalEndDate TEXT,
-                GoalHours TEXT,
-                Complete TEXT
-                )";
-            connection.Execute(createTable);
-        }
-
-        public static void DropCodingGoalsTable()
-        {
-            using var connection = new SqliteConnection(AppConfig.ConnectionString);
-            var dropTable = @"DROP TABLE coding_goals";
-            connection.Execute(dropTable);
+            connection.Execute(sql);
         }
     }
 }
