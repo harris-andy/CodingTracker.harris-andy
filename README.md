@@ -6,34 +6,43 @@ This is my submission for the cSharpAcademy Habit Logger project found here: [Co
 
 ## Project Description
   - It's a small console CRUD app in which the user can track coding sessions which are stored in a local SQLite database.
-  - Built with C#/.Net 8
+  - Built with C#/.Net 8, SQLite, Dapper and Spectre Console (that thing is awesome)
 
 
 ## Usage
   - Follow the instructions and away you go
   - i.e. Select from the menu to perform operations such as: viewing all records, inserting, updating and deleting records.
 
-    <img src="./images/gamemenu.png" alt="Game Menu" width="500"/>
+    ![Main menu screen][./images/MainMenu.png]
 
 
 ## Features
-   - Custom data entry including hobby, date, unit and quantity. For example "1 hour of walking, 35 minutes of meditation, 2000 calories of food eaten", etc.
-   - If the database doesn't already exist, one will be created and filled with 100 rows of fake data to play with.
-   - Limited custom report option which summarizes data by year, hobby or unit (e.g. miles, hours, etc.). 
-   - Populate fake data 100 rows at a time.
-   - Delete table contents from the main menu.
-   - Parameterized SQL queries used throughout.
-   - Can sort all records by ID or Date.
+   - Record a coding session including start date, end date and activity
+   - Options to add fake data 100 rows at a time and clear the database from main menu
+   - Record a live coding session with a timer displayed in the console
+
+    ![stopwatch timer for coding session][./images/LiveCoding.png]
+
+    - Get summary records by day, week or year
+
+    ![annual summary of records][./images/RecordSummary.png]
+
+    - Set a coding goal with start and end dates and target hours
+    - See progress toward your goal - updated with every new coding session entered
+
+    ![coding goal progress][./images/GoalProgress.png]
 
 
 ## More to do
-  - I'd like to add more granularity to the custom reports. For example, how many miles of walking did I do in a given month? Or basic math operations like averages.
-  - The output could use better formatting. I only just saw that there are plugins that help with this. 
+  - UI formatting could use some work. That's my Achille's heel.
+  - Could use better granularity and customization on reports and coding goals. But there's only so much time.
+  - The DisplayData class, which includes all table/chart printing, needs revision. I tried to condense the functions but I wasn't successful because each table had specific data points and/or structure of source material.
 
 
 ## Questions & Comments
-  - I reviewed the code conventions documents and did my best cleaning it up. If I missed anything, please let me know.
-  - The program's structure isn't great. I thought about using OOP but it seemed counterproductive for something so small. For example I can see how Insert, Update and Delete could build off one common function but I wasn't sure it was worth it.
-  - Which files should I have added to gitignore?
-  - The GetRecordSummary() and GetSearchTerm() methods may be a bit unwieldy but I'm not sure how to make them more efficient.
-  - Any suggestions on how to clarify my code is greatly appreciated! Program structure is by far the most difficult part for me. Thanks!
+  - Doing user input verification with Spectre is SO much better - I'm using that for everything now
+  - I tried to improve my organization but it still needs work. 
+  - I used "public static" on everything which I feel isn't right. I'd appreciate any advice on this.
+  - Getting the report summaries was quite a pain at first. I tried using LINQ to manipulate the data but I was working with groups of lists of objects and I gave up. So I switched to better SQL queries and that made it a lot easier to parse the data.
+  - 
+
