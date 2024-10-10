@@ -13,18 +13,18 @@ This is my submission for the cSharpAcademy Habit Logger project found here: [Co
 - Follow the instructions and away you go
 - i.e. Select from the menu to perform operations such as: viewing all records, inserting, updating and deleting records.
 
-![main menu](/images/gamemenu.png)
+![main menu](/images/mainmenu2.png)
 
 ## Features
 - Record a coding session including start date, end date and activity
 - Options to add fake data 100 rows at a time and clear the database from main menu
 - Record a live coding session with a timer displayed in the console
 
-![stopwatch timer for coding session](/images/livecoding.png)
+![stopwatch timer](/images/livecoding.png)
 
 - Get summary records by day, week or year
 
-![annual summary of records](/images/summary.png)
+![summary year](/images/summary.png)
 
 - Set a coding goal with start and end dates and target hours
 - See progress toward your goal - updated with every new coding session entered
