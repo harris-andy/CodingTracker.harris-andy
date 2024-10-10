@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Spectre.Console;
 
 namespace CodingTracker.harris_andy
@@ -207,7 +203,6 @@ namespace CodingTracker.harris_andy
                     "\tType 1 to View Sessions by Day\n" +
                     "\tType 2 to View Sessions by Week\n" +
                     "\tType 3 to View Sessions by Year\n" +
-                    "\tType 4 to Select Specific Date Range\n" +
                     "--------------------------------------------------\n");
 
             int inputNumber = GetMenuChoice(0, 4);
@@ -226,9 +221,6 @@ namespace CodingTracker.harris_andy
                     break;
                 case 3:
                     filterOption = "Year";
-                    break;
-                case 4:
-                    filterOption = "dateRange";
                     break;
                 default:
                     MainMenu();

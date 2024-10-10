@@ -1,19 +1,12 @@
-using System;
-using System.Configuration;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using Spectre.Console;
 using Dapper;
-using Microsoft.VisualBasic;
 
 
 namespace CodingTracker.harris_andy
 {
     public class DBInteractions
     {
-        // public static void Insert(DateTime startDateTime, DateTime endDateTime, string activity)
         public static void Insert(CodingSession session)
         {
             using var connection = new SqliteConnection(AppConfig.ConnectionString);

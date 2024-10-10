@@ -36,7 +36,6 @@ namespace CodingTracker.harris_andy
         public decimal AvgTime;
         public int Sessions;
         public required string Activity;
-
         public SummaryReport() { }
     }
 }

@@ -176,7 +176,6 @@ namespace CodingTracker.harris_andy
                     {
                         var elapsedTime = DateTime.Now - startTime;
                         ctx.Status($"Coding...  {elapsedTime.ToString(@"hh\:mm\:ss")}");
-                        // ctx.Spinner(Spinner.Known.BouncingBar);
                         ctx.Spinner(Spinner.Known.Pong);
                         ctx.SpinnerStyle(Style.Parse("yellow"));
 
@@ -192,6 +191,7 @@ namespace CodingTracker.harris_andy
                     }
                 });
             CodingSession stopwatch = new CodingSession(startDayTime, endDayTime, activity);
+            DBInteractions.Insert(stopwatch);
         }
     }
 }

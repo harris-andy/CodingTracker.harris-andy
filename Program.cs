@@ -5,10 +5,6 @@ Requirements
 
 - Clean up Create Tables functions - there's a lot of repetition
 
-Challenges
-
-    Add the possibility of tracking the coding time via a stopwatch so the user can track the session as it happens.
-
 */
 
 using System.Configuration;
@@ -25,7 +21,6 @@ internal class Program
     {
         DBInteractions.InitializeDatabase();
         DBInteractions.InitializeCodingGoalDatabase();
-        // DisplayData.LiveSessionProgress();
 
         UserInput.MainMenu();
     }
