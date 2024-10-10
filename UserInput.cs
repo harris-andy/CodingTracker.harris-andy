@@ -20,7 +20,7 @@ namespace CodingTracker.harris_andy
                     "\tWhat would you like to do?\n\n" +
                     "\tType 0 to Close Application\n" +
                     "\tType 1 to View All Records\n" +
-                    "\tType 2 to View Records by Date Range\n" +
+                    "\tType 2 to View Records Summary\n" +
                     "\tType 3 to Insert Record\n" +
                     "\tType 4 to Delete Record\n" +
                     "\tType 5 to Update Record\n" +

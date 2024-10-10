@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualBasic;
+using System.Windows.Input;
 using Spectre.Console;
 
 namespace CodingTracker.harris_andy
@@ -34,7 +35,7 @@ namespace CodingTracker.harris_andy
                     $"[{color}]{session.StartDateTime.ToShortTimeString()}[/]",
                     $"[{color}]{session.EndDateTime.ToShortDateString()}[/]",
                     $"[{color}]{session.EndDateTime.ToShortTimeString()}[/]",
-                    $"[{color}]{session.Duration}min[/]"
+                    $"[{color}]{session.Duration} min[/]"
                 );
                 isAlternateRow = !isAlternateRow;
             }
@@ -159,34 +160,38 @@ namespace CodingTracker.harris_andy
                 .AddItem("Goal:", goalTime, Color.Blue));
             Console.WriteLine("\n\n");
         }
+
         public static void LiveSessionProgress()
         {
-            AnsiConsole.Progress()
-                // .AutoRefresh(false) // Turn off auto refresh
-                // .AutoClear(false)   // Do not remove the task list when done
-                // .HideCompleted(false)   // Hide tasks as they are completed
-                // .Columns(new ProgressColumn[]
-                // {
-                //     new TaskDescriptionColumn(),    // Task description
-                //     new ProgressBarColumn(),        // Progress bar
-                //     new PercentageColumn(),         // Percentage
-                //     new RemainingTimeColumn(),      // Remaining time
-                //     new SpinnerColumn(),            // Spinner
-                // })
-                .Start(ctx =>
+            Console.Clear();
+            string activity = UserInput.GetActivity();
+            DateTime startTime = DateTime.Now;
+            string startDayTime = startTime.ToString("yyyy-MM-dd HH:mm:ss");
+            string endDayTime = "1001-01-01 00:00:01";
+
+            AnsiConsole.Status()
+                .Start("Coding...", ctx =>
                 {
-                    // Define tasks
-                    var task1 = ctx.AddTask("[green]Reticulating splines[/]");
-                    var task2 = ctx.AddTask("[green]Folding space[/]");
-
-                    while (!ctx.IsFinished)
+                    while (true)
                     {
-                        task1.Increment(1.5);
-                        task2.Increment(0.5);
+                        var elapsedTime = DateTime.Now - startTime;
+                        ctx.Status($"Coding...  {elapsedTime.ToString(@"hh\:mm\:ss")}");
+                        // ctx.Spinner(Spinner.Known.BouncingBar);
+                        ctx.Spinner(Spinner.Known.Pong);
+                        ctx.SpinnerStyle(Style.Parse("yellow"));
 
-                        Task.Delay(10);
+                        if (Console.KeyAvailable)
+                        {
+                            ConsoleKeyInfo button = Console.ReadKey(true);
+                            if (button.Key == ConsoleKey.Spacebar)
+                            {
+                                endDayTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                                break;
+                            }
+                        }
                     }
                 });
+            CodingSession stopwatch = new CodingSession(startDayTime, endDayTime, activity);
         }
     }
 }

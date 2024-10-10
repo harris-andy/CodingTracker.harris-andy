@@ -19,7 +19,14 @@ using Microsoft.Data.Sqlite;
 using CodingTracker.harris_andy;
 
 
-DBInteractions.InitializeDatabase();
-DBInteractions.InitializeCodingGoalDatabase();
+internal class Program
+{
+    private static void Main(string[] args)
+    {
+        DBInteractions.InitializeDatabase();
+        DBInteractions.InitializeCodingGoalDatabase();
+        // DisplayData.LiveSessionProgress();
 
-UserInput.MainMenu();
+        UserInput.MainMenu();
+    }
+}
