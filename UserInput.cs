@@ -72,7 +72,6 @@ namespace CodingTracker.harris_andy
                         break;
                     case 10:
                         RetrieveRecord.GetCodingGoalProgressData();
-                        // Create Table with codingGoal
                         break;
                     default:
                         Console.Clear();
@@ -100,7 +99,6 @@ namespace CodingTracker.harris_andy
                 EndDayTime = endDateTime.ToString("yyyy-MM-dd HH:mm:ss"),
                 Activity = activity
             };
-            // return (startDateTime, endDateTime, activity);
             return session;
         }
 
@@ -200,21 +198,6 @@ namespace CodingTracker.harris_andy
             return (startDate, endDate);
         }
 
-        // public static int GetAllOrFiltered()
-        // {
-        //     int answer = AnsiConsole.Prompt(
-        //     new TextPrompt<int>("1. All Records\n2. Filtered Records\nEnter choice:")
-        //         .Validate((n) =>
-        //         {
-        //             if (n == 1 || n == 2)
-        //                 return ValidationResult.Success();
-        //             else
-        //                 return ValidationResult.Error("[red]Invalid number[/]");
-        //         }));
-        //     Console.Clear();
-        //     return answer;
-        // }
-
         public static string FilteredOptionsMenu()
         {
             Console.WriteLine(
@@ -256,20 +239,6 @@ namespace CodingTracker.harris_andy
 
         public static CodingGoal SetCodingGoal()
         {
-            // int goalTimeForm = AnsiConsole.Prompt(
-            // new TextPrompt<int>("Set Coding Goal Date Range:\n1. Day\n2. Week\n3. Year\nEnter choice:")
-            //     .Validate((n) =>
-            //     {
-            //         if (n <= 3 && n >= 1)
-            //             return ValidationResult.Success();
-            //         else
-            //             return ValidationResult.Error("[red]Invalid number[/]");
-            //     }));
-
-            // string goalTimeForm = AnsiConsole.Prompt(
-            //     new TextPrompt<string>("Set your coding goal time format:")
-            //     .AddChoices(["Day", "Week", "Year"]));
-
             DateTime startDate = GetDate("coding goal start");
             DateTime userInputDate = GetDate("coding goal end");
             DateTime endDate = userInputDate.Date.AddHours(23).AddMinutes(59).AddSeconds(59);

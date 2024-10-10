@@ -129,5 +129,21 @@ namespace CodingTracker.harris_andy
 
             return sessionData;
         }
+
+        public static double GetGoalTimeNeeded(CodingGoal goal, SummaryReport sessionData)
+        {
+            double hoursPerDayNeeded = 0;
+            if ((double)sessionData.TotalTime / 60 < goal.GoalHours)
+            {
+                double timeNeeded = goal.GoalHours - ((double)sessionData.TotalTime / 60);
+                string endDateString = sessionData.DateRange.Substring(sessionData.DateRange.IndexOf("to") + 3).Trim();
+                DateTime sessionEndDate = DateTime.Parse(endDateString);
+                TimeSpan timeRemaining = goal.GoalEndDate - DateTime.Now;
+
+                if (timeRemaining.TotalDays > 0)
+                    hoursPerDayNeeded = timeNeeded / timeRemaining.Days;
+            }
+            return hoursPerDayNeeded;
+        }
     }
 }
