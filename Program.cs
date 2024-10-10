@@ -5,15 +5,13 @@ Requirements
 
 - Fix filtered week output to use Week Starting
 
-- Correct GetCodingGoal() because now it returns everything
-
 - Clean up Create Tables functions - there's a lot of repetition
 
 Challenges
 
     Add the possibility of tracking the coding time via a stopwatch so the user can track the session as it happens.
 
-    Create the ability to set coding goals and show how far the users are from reaching their goal, along with how many hours a day they would have to code to reach their goal. You can do it via SQL queries or with C#.
+    ADD: how many hours a day they would have to code to reach their goal. You can do it via SQL queries or with C#.
 */
 
 using System.Configuration;

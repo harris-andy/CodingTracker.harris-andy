@@ -74,26 +74,41 @@ namespace CodingTracker.harris_andy
 
         public static List<CodingGoal> GetCodingGoals()
         {
-            string codingSQL = "SELECT * FROM coding_goals WHERE complete = 'no'";
+            string codingSQL = "SELECT * FROM coding_goals";
             using var connection = new SqliteConnection(AppConfig.ConnectionString);
             List<CodingGoal> goals = connection.Query<CodingGoal>(codingSQL).ToList();
 
-            // DisplayData.CreateTableCodingGoals(goals);
-
-            // DisplayData.CodingGoalsProgress(goals);
-            // using var connection2 = new SqliteConnection(AppConfig.ConnectionString);
-            // string updateTable = "UPDATE coding_goals SET complete = 'no' WHERE Id = 4";
-            // connection2.Execute(updateTable);
+            foreach (CodingGoal goal in goals)
+            {
+                SummaryReport sessionData = GetCodingGoalSessionData(goal);
+                if ((float)sessionData.TotalTime / 60 > goal.GoalHours)
+                {
+                    DBInteractions.UpdateCodingGoalComplete(goal.Id);
+                }
+            }
             return goals;
         }
 
         public static void GetCodingGoalProgressData()
         {
+            List<CodingGoal> _ = GetCodingGoals();
+
             (int recordID, bool _) = UserInput.GetRecordID("get progress for", "goal");
             string codingSQL = $"SELECT * FROM coding_goals WHERE Id = {recordID}";
             using var connection = new SqliteConnection(AppConfig.ConnectionString);
             CodingGoal goal = connection.QuerySingle<CodingGoal>(codingSQL);
 
+            SummaryReport sessionData = GetCodingGoalSessionData(goal);
+
+            DisplayData.ShowCodingGoalProgress(goal, sessionData);
+
+            Console.WriteLine("Press any key to continue...");
+            Console.Read();
+            Console.Clear();
+        }
+
+        public static SummaryReport GetCodingGoalSessionData(CodingGoal goal)
+        {
             string startDate = goal.GoalStartDate.ToString("yyyy-MM-dd HH:mm:ss");
             string endDate = goal.GoalEndDate.ToString("yyyy-MM-dd HH:mm:ss");
 
@@ -109,14 +124,10 @@ namespace CodingTracker.harris_andy
                     StartDayTime BETWEEN '{startDate}' AND '{endDate}'
                     AND EndDayTime BETWEEN '{startDate}' AND '{endDate}'";
 
-
+            using var connection = new SqliteConnection(AppConfig.ConnectionString);
             SummaryReport sessionData = connection.QuerySingle<SummaryReport>(progressSQL);
 
-            DisplayData.ShowCodingGoalProgress(goal, sessionData);
-
-            Console.WriteLine("Press any key to continue...");
-            Console.Read();
-            Console.Clear();
+            return sessionData;
         }
     }
 }

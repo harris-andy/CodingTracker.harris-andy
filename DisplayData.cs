@@ -131,16 +131,16 @@ namespace CodingTracker.harris_andy
 
             table.AddColumn(new TableColumn("[cyan1]Start Date[/]").LeftAligned());
             table.AddColumn(new TableColumn("[green1]End Date[/]").RightAligned());
-            table.AddColumn(new TableColumn("[blue1]Target Hours[/]").RightAligned());
-            table.AddColumn(new TableColumn("[yellow1]Actual Hours[/]").RightAligned());
+            // table.AddColumn(new TableColumn("[blue1]Target Hours[/]").RightAligned());
+            // table.AddColumn(new TableColumn("[yellow1]Actual Hours[/]").RightAligned());
             table.AddColumn(new TableColumn("[red]Complete?[/]").LeftAligned());
 
             table.AddRow(
                 $"{goal.GoalStartDate.ToShortDateString()}",
                 $"{goal.GoalEndDate.ToShortDateString()}",
-                $"{goal.GoalHours.ToString()}",
-                $"{(sessionData.TotalTime / 60).ToString()}",
-                $"{complete}"
+                // $"{goal.GoalHours.ToString()}",
+                // $"{(sessionData.TotalTime / 60).ToString()}",
+                $"{goal.Complete}"
             );
             AnsiConsole.Write(table);
 
@@ -151,10 +151,10 @@ namespace CodingTracker.harris_andy
 
             AnsiConsole.Write(new BarChart()
                 .Width(75)
-                .Label("[green bold underline]Coding Times[/]")
+                .Label("[green bold underline]Coding Hours[/]")
                 .CenterLabel()
                 .AddItem("Coding Time", codingTime, Color.Red)
-                .AddItem("Goal Time", goalTime, Color.Blue));
+                .AddItem("Goal:", goalTime, Color.Blue));
 
             Console.WriteLine("\n\n");
         }

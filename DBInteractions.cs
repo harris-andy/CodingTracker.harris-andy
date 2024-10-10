@@ -25,8 +25,8 @@ namespace CodingTracker.harris_andy
         public static void InsertCodingGoal(CodingGoal goal)
         {
             using var connection = new SqliteConnection(AppConfig.ConnectionString);
-            var parameters = new { start = goal.GoalStartDate.ToString("yyyy-MM-dd HH:mm:ss"), end = goal.GoalEndDate.ToString("yyyy-MM-dd HH:mm:ss"), hours = goal.GoalHours };
-            var sql = "INSERT INTO coding_goals (GoalStartDate, GoalEndDate, GoalHours) VALUES (@start, @end, @hours)";
+            var parameters = new { start = goal.GoalStartDate.ToString("yyyy-MM-dd HH:mm:ss"), end = goal.GoalEndDate.ToString("yyyy-MM-dd HH:mm:ss"), hours = goal.GoalHours, complete = "no" };
+            var sql = "INSERT INTO coding_goals (GoalStartDate, GoalEndDate, GoalHours, Complete) VALUES (@start, @end, @hours, 'no')";
             connection.Execute(sql, parameters);
         }
 
@@ -76,6 +76,13 @@ namespace CodingTracker.harris_andy
                 UserInput.MainMenu();
             }
             Console.Clear();
+        }
+
+        public static void UpdateCodingGoalComplete(int goalId)
+        {
+            string sql = $"UPDATE coding_goals SET Complete = 'yes' WHERE Id = {goalId}";
+            using var connection = new SqliteConnection(AppConfig.ConnectionString);
+            connection.Execute(sql);
         }
 
         public static void DeleteTableContents()
@@ -160,7 +167,8 @@ namespace CodingTracker.harris_andy
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 GoalStartDate TEXT,
                 GoalEndDate TEXT,
-                GoalHours TEXT
+                GoalHours TEXT,
+                Complete TEXT
                 )";
             connection.Execute(createTable);
         }
