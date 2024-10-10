@@ -13,7 +13,7 @@ This is my submission for the cSharpAcademy Habit Logger project found here: [Co
   - Follow the instructions and away you go
   - i.e. Select from the menu to perform operations such as: viewing all records, inserting, updating and deleting records.
 
-    [Main menu screen](./images/mainMenu.png)
+    [Main menu screen](/images/mainMenu.png)
 
 
 ## Features
@@ -21,16 +21,16 @@ This is my submission for the cSharpAcademy Habit Logger project found here: [Co
    - Options to add fake data 100 rows at a time and clear the database from main menu
    - Record a live coding session with a timer displayed in the console
 
-    [stopwatch timer for coding session](./images/liveCoding.png)
+    [stopwatch timer for coding session](/images/liveCoding.png)
 
     - Get summary records by day, week or year
 
-    [annual summary of records](./images/recordSummary.png)
+    [annual summary of records](/images/recordSummary.png)
 
     - Set a coding goal with start and end dates and target hours
     - See progress toward your goal - updated with every new coding session entered
 
-    [coding goal progress](./images/goalProgress.png)
+    [coding goal progress](/images/goalProgress.png)
 
 
 ## More to do
