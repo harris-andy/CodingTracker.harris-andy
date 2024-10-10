@@ -21,7 +21,7 @@ This is my submission for the cSharpAcademy Habit Logger project found here: [Co
 - Record a live coding session with a timer displayed in the console
 
 
-![stopwatch timer](/images/livecoding.png)
+![stopwatch timer](/images/Screenshot%202024-10-10%20at%2019.54.18.png)
 
 
 - Get summary records by day, week or year
@@ -34,7 +34,7 @@ This is my submission for the cSharpAcademy Habit Logger project found here: [Co
 - See progress toward your goal - updated with every new coding session entered
 
 
-![coding goal progress](/images/goalprogress.png)
+![coding goal progress](/images/Screenshot%202024-10-10%20at%2019.52.51.png)
 
 
 ## More to do
