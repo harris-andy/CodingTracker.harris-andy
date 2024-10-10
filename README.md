@@ -1,11 +1,11 @@
 
 # Coding Tracker Project
 
-This is my submission for the cSharpAcademy Habit Logger project found here: [Habit Logger Project](https://thecsharpacademy.com/project/12/habit-logger)
+This is my submission for the cSharpAcademy Habit Logger project found here: [Coding Tracker Project](https://thecsharpacademy.com/project/13/coding-tracker)
 
 
 ## Project Description
-  - It's a small console CRUD app in which the user can track hobbies which are stored in a local SQLite database.
+  - It's a small console CRUD app in which the user can track coding sessions which are stored in a local SQLite database.
   - Built with C#/.Net 8
 
 

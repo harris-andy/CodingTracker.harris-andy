@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
 using Spectre.Console;
 
 namespace CodingTracker.harris_andy
@@ -41,6 +46,7 @@ namespace CodingTracker.harris_andy
 
         public static void CreateTableFiltered(List<SummaryReport> reports, string dateFilter)
         {
+            Console.Clear();
             var table = new Table();
             bool isAlternateRow = false;
 
@@ -147,6 +153,7 @@ namespace CodingTracker.harris_andy
                 });
             CodingSession stopwatch = new CodingSession(startDayTime, endDayTime, activity);
             DBInteractions.Insert(stopwatch);
+            Console.Clear();
         }
 
         public static void ShowCodingGoalProgress(CodingGoal goal, SummaryReport sessionData)
@@ -196,7 +203,7 @@ namespace CodingTracker.harris_andy
                 .Label("[green bold underline]Coding Hours[/]")
                 .CenterLabel()
                 .AddItem("Coding Time", codingTime, Color.Red)
-                .AddItem("Goal:", goalTime, Color.Blue));
+            .AddItem("Goal:", goalTime, Color.Blue));
             Console.WriteLine("\n\n");
         }
     }
