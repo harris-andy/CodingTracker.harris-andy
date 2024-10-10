@@ -13,7 +13,7 @@ This is my submission for the cSharpAcademy Habit Logger project found here: [Co
 - Follow the instructions and away you go
 - i.e. Select from the menu to perform operations such as: viewing all records, inserting, updating and deleting records.
 
-![Main menu screen](/images/mainMenu.png)
+![Main menu screen](/images/gamemenu.png)
 
 ## Features
 - Record a coding session including start date, end date and activity
