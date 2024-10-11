@@ -44,7 +44,7 @@ This is my submission for the cSharpAcademy Habit Logger project found here: [Co
 
 
 ## Questions & Comments
-- Note on organization: I made two folders for class files, Classes_Function and Classes_Object. I don't think that's the "correct" way but it works for now.
+- Note on organization: I made two folders for class files, Classes_Function and Classes_Object. "Function" has the methods I used throughout, "Object" has the three objects that passed around the data. I don't think that's the "correct" way but it works for now.
 - I used AI to parse the date in the summary report for weeks. I didn't realize how weird it gets trying to parse dates from week numbers.
 - I also used AI for some of the table styling. I can't stand UI design so I gave up and let Claude make it pretty.
 - Doing user input verification with Spectre is SO much better - I'm using that for everything now
